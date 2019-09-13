@@ -10,11 +10,11 @@ try {
   core.setOutput("time", time);
   // Get the JSON webhook payload for the event that triggered the workflow
   const { head_branch, pull_requests }= github.context.payload;
-  console.log('Log: pull_requests }', pull_requests);
-  console.log('Log: head_branch,', head_branch);
+  console.log('Log: pull_requests', pull_requests);
+  console.log('Log: head_branch', head_branch);
 
-  console.log(JSON.stringify(github, undefined, 2));
-  const { ref} = github.context;
+  console.log(JSON.stringify(github.context, undefined, 2));
+  const { ref } = github.context;
   console.log('Log: ref ', JSON.stringify(ref, undefined, 2));
 } catch (error) {
   core.setFailed(error.message);
