@@ -1,8 +1,8 @@
 {
-  "name": "javascript-template-action",
+  "name": "pr-lint",
   "version": "0.0.0",
   "private": true,
-  "description": "JavaScript template action",
+  "description": "PR lint",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -10,17 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-template.git"
+    "url": "git+https://github.com/cleartax/pr-lint"
   },
   "keywords": [
     "actions",
     "node",
     "setup"
   ],
-  "author": "YourNameOrOrganization",
+  "author": "Rajanand",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.0.0"
+    "@actions/core": "^1.0.0",
+    "@actions/github": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
