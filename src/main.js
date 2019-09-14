@@ -4,6 +4,7 @@ const axios = require("axios");
 
 async function run() {
   try {
+    const client = new github.GitHub(GITHUB_TOKEN);
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
     const {
       payload: { repository, organization },
@@ -104,7 +105,6 @@ async function run() {
     if (!prNumber) {
       core.setFailed("Could not get pull request number from context, exiting");
     }
-    const client = new github.GitHub(GITHUB_TOKEN);
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
     addLabels(client, prNumber, label);
