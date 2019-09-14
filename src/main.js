@@ -4,7 +4,9 @@ const axios = require("axios");
 
 async function run() {
   try {
+    const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
+    const client = new github.GitHub(GITHUB_TOKEN);
     const {
       payload: { repository, organization },
       sha
@@ -18,7 +20,6 @@ async function run() {
 
     console.log('repoDetails', repoDetails);
 
-    const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -104,7 +105,6 @@ async function run() {
     if (!prNumber) {
       core.setFailed("Could not get pull request number from context, exiting");
     }
-    const client = new github.GitHub(GITHUB_TOKEN);
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
     addLabels(client, prNumber, label);
