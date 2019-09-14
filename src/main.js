@@ -56,7 +56,7 @@ async function run() {
     };
 
     const checkPivotal = async () => {
-      console.log("Checking pivotal id for ", pull_request.);
+      console.log("Checking pivotal id for ", pull_request);
       const pivotalId = getPivotalId(ref);
       console.log("pivotalId -> ", pivotalId);
 
