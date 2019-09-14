@@ -3,4 +3,4 @@ description: 'Lint the PR'
 author: 'cleartax'
 runs:
   using: 'node12'
-  main: 'src/main.js'
+  main: 'lib/index.js'
