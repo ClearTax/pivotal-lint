@@ -5,6 +5,32 @@ pivotal id will lead to check failure.
 
 PR Lint will also add the team label based on the pivotal project board for the given story
 
+### How to use PR Lint?
+
+Add a pr-lint.yml file in your `.github/workflows/` directory
+
+```yaml
+name: PR lint
+
+ on: [pull_request]
+
+ jobs:
+  pr_lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check pivotal story in branch name and add POD label
+      uses: cleartax/pr-lint@v1
+      with:
+        github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
+        head-branch: ${{ github.head_ref }}
+
+```
+
+`github-token` and `pivotal-token` are required for PR Lint to work. You can add these token under github [secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
+
+
+
 ## FAQs
 
 <details>
