@@ -24,6 +24,8 @@ async function run() {
       owner: organization.login,
       repo: repository.name
     };
+    console.log('repoDetails', repoDetails);
+    console.log('context', github.context);
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -71,9 +73,9 @@ async function run() {
 
     const checkPivotal = async () => {
       const { ref } = github.context;
-      core.debug("Checking pivotal id");
+      console.log("Checking pivotal id for ", ref);
       const pivotalId = getPivotalId(ref);
-      core.debug("pivotalId -> ", pivotalId);
+      console.log("pivotalId -> ", pivotalId);
 
       if (!pivotalId) {
         core.setFailed("Pivotal id is missing in your branch.");
@@ -94,7 +96,7 @@ async function run() {
     };
 
     const projectName = await checkPivotal();
-    core.debug("projectName -> ", projectName);
+    console.log("projectName -> ", projectName);
     if (!projectName) {
       core.setFailed("Could not get project name from the pivotal id");
     }
