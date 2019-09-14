@@ -20,7 +20,7 @@ async function run() {
     const {
       payload: { repository, organization, pull_request },
     } = github.context;
-    console.log(JSON.stringify(github.context));
+    console.log(github.context);
 
     const repoDetails = {
       owner: organization.login,
