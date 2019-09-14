@@ -1,10 +1,6 @@
 name: 'PR lint'
 description: 'Lint the PR'
 author: 'cleartax'
-inputs:
-  myInput:
-    description: 'Test input'
-    default: 'default value'
 runs:
   using: 'node12'
-  main: 'lib/main.js'
+  main: 'lib/index.js'
