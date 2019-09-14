@@ -5,6 +5,7 @@ const axios = require("axios");
 async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
+    console.log('check github token', typeof token , token.length);
     const prNumber = getPrNumber();
 
     if (!prNumber) {
@@ -13,6 +14,7 @@ async function run() {
     }
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
+    console.log('check pivotal token', typeof PIVOTAL_TOKEN, PIVOTAL_TOKEN.length);
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
