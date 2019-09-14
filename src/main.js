@@ -105,7 +105,6 @@ async function run() {
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
     addLabels(client, prNumber, label);
-    core.setFailed("fail to try rerun");
   } catch (error) {
     core.setFailed(error.message);
   }
