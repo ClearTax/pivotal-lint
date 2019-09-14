@@ -45,12 +45,13 @@ async function run() {
     };
 
     const addLabels = async (client, prNumber, label) => {
-      await client.issues.addLabels({
+      const { data } = await client.issues.addLabels({
         owner: data.owner,
         repo: data.repo,
         issue_number: prNumber,
         labels: label
       });
+      console.log(data);
     };
 
     const getPrNumber = () => {
@@ -94,7 +95,7 @@ async function run() {
     const client = new github.GitHub(token);
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
-    addLabels(client, '188', label);
+    addLabels(client, 188, label);
     core.setFailed("fail to try rerun");
   } catch (error) {
     core.setFailed(error.message);
