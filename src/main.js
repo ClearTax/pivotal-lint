@@ -45,13 +45,13 @@ async function run() {
     };
 
     const addLabels = async (client, prNumber, label) => {
-      const { data } = await client.issues.addLabels({
+      const res = await client.issues.addLabels({
         owner: data.owner,
         repo: data.repo,
         issue_number: prNumber,
         labels: label
       });
-      console.log(data);
+      console.log(res);
     };
 
     const getPrNumber = () => {
