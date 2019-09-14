@@ -14,9 +14,11 @@ async function run() {
   try {
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
+    const branch = core.getInput("branch", { required: true });
+    console.log('branch', branch);
     const client = new github.GitHub(GITHUB_TOKEN);
     const {
-      payload: { repository, organization },
+      payload: { repository, organization, pull_request },
       sha
     } = github.context;
 
@@ -53,27 +55,8 @@ async function run() {
       }
     };
 
-    const getPrNumber = async () => {
-      try {
-        const {
-          data: pulls
-        } = await client.repos.listPullRequestsAssociatedWithCommit({
-          ...repoDetails,
-          commit_sha: sha
-        });
-        const [pullRequest] = pulls;
-        if (pullRequest) {
-          return pullRequest.number;
-        }
-        return undefined;
-      } catch (error) {
-        core.setFailed(error.message);
-      }
-    };
-
     const checkPivotal = async () => {
-      const { ref } = github.context;
-      console.log("Checking pivotal id for ", ref);
+      console.log("Checking pivotal id for ", pull_request.);
       const pivotalId = getPivotalId(ref);
       console.log("pivotalId -> ", pivotalId);
 
@@ -100,7 +83,7 @@ async function run() {
     if (!projectName) {
       core.setFailed("Could not get project name from the pivotal id");
     }
-    const prNumber = await getPrNumber();
+    const prNumber = pull_request.number;
     if (!prNumber) {
       core.setFailed("Could not get pull request number from context, exiting");
     }
