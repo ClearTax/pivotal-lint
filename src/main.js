@@ -6,13 +6,13 @@ async function run() {
   try {
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
     const {
-      payload: { repository },
+      payload: { repository, organization },
       sha
     } = github.context;
     console.log(github.context)
 
     const repoDetails = {
-      owner: repository.owner.name,
+      owner: organization.login,
       repo: repository.name
     };
 
