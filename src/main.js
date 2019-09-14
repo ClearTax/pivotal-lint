@@ -15,6 +15,8 @@ async function run() {
       repo: repository.name
     };
 
+    console.log('repoDetails', repoDetails);
+
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
     const request = axios.create({
@@ -52,17 +54,21 @@ async function run() {
     };
 
     const getPrNumber = async () => {
-      const {
-        data: pulls
-      } = await client.repos.listPullRequestsAssociatedWithCommit({
-        ...repoDetails,
-        commit_sha: sha
-      });
-      const [pullRequest] = pulls;
-      if (pullRequest) {
-        return pullRequest.number;
+      try {
+        const {
+          data: pulls
+        } = await client.repos.listPullRequestsAssociatedWithCommit({
+          ...repoDetails,
+          commit_sha: sha
+        });
+        const [pullRequest] = pulls;
+        if (pullRequest) {
+          return pullRequest.number;
+        }
+        return undefined;
+      } catch (error) {
+        console.log(error);
       }
-      return undefined;
     };
 
     const checkPivotal = async () => {
