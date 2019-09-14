@@ -6,12 +6,6 @@ async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
     console.log('check github token', typeof token , token.length);
-    const prNumber = getPrNumber();
-
-    if (!prNumber) {
-      console.log("Could not get pull request number from context, exiting");
-      return;
-    }
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
     console.log('check pivotal token', typeof PIVOTAL_TOKEN, PIVOTAL_TOKEN.length);
@@ -81,6 +75,12 @@ async function run() {
     console.log("Log: run -> projectName ", projectName);
     if (projectName) {
       console.log("Could not get project name from the pivotal id");
+      return;
+    }
+    const prNumber = getPrNumber();
+
+    if (!prNumber) {
+      console.log("Could not get pull request number from context, exiting");
       return;
     }
     const client = new github.GitHub(token);
