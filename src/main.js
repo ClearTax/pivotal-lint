@@ -60,6 +60,7 @@ async function run() {
 
       if (!pivotalId) {
         core.setFailed("Pivotal id is missing in your branch.");
+        return false;
       }
 
       const storyDetails = await getStoryDetails(pivotalId);
@@ -80,6 +81,7 @@ async function run() {
     console.log("projectName -> ", projectName);
     if (!projectName) {
       core.setFailed("Could not get project name from the pivotal id");
+      return;
     }
     const prNumber = pull_request.number;
     if (!prNumber) {
