@@ -15,20 +15,17 @@ async function run() {
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
     const headBranch = core.getInput("head-branch", { required: true });
-    const baseBranch = core.getInput("head-branch", { required: true });
-    console.log('branch', headBranch, baseBranch);
     const client = new github.GitHub(GITHUB_TOKEN);
+
     const {
       payload: { repository, organization, pull_request },
     } = github.context;
+    console.log(JSON.stringify(github.context));
 
-    const { head, base } = pull_request;
-    console.log(head, base)
     const repoDetails = {
       owner: organization.login,
       repo: repository.name
     };
-    console.log('repoDetails', repoDetails);
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -57,7 +54,7 @@ async function run() {
     };
 
     const checkPivotal = async () => {
-      console.log("Checking pivotal id for ", pull_request.number);
+      console.log("Checking pivotal id for ", headBranch);
       const pivotalId = getPivotalId(headBranch);
       console.log("pivotalId -> ", pivotalId);
 
