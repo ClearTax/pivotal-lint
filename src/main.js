@@ -6,6 +6,13 @@ async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
     console.log(github.context)
+    const { actor, sha, repository: { name }, } = github.context.payload;
+    const data = {
+      owner: actor,
+      sha,
+      repo: name
+    };
+    console.log(data);
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
