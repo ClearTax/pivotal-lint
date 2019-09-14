@@ -6,14 +6,13 @@ async function run() {
   try {
     const GITHUB_TOKEN = core.getInput("github-token", { required: true });
     const {
-      payload: {
-        repository: { name },
-        organization: { login }
-      },
+      payload: { repository },
+      sha
     } = github.context;
+
     const repoDetails = {
-      owner: login,
-      repo: name
+      owner: repository.owner.name,
+      repo: repository.name
     };
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
@@ -42,19 +41,24 @@ async function run() {
 
     const addLabels = async (client, prNumber, label) => {
       try {
-        const res = await client.issues.addLabels({
+        await client.issues.addLabels({
           ...repoDetails,
           issue_number: prNumber,
           labels: [label]
         });
-      }
-      catch(error) {
-        console.log(error)
+      } catch (error) {
+        console.log(error);
       }
     };
 
-    const getPrNumber = () => {
-      const pullRequest = github.context.payload.pull_request;
+    const getPrNumber = async () => {
+      const {
+        data: pulls
+      } = await client.repos.listPullRequestsAssociatedWithCommit({
+        ...repoDetails,
+        commit_sha: sha
+      });
+      const [pullRequest] = pulls;
       if (pullRequest) {
         return pullRequest.number;
       }
@@ -65,9 +69,11 @@ async function run() {
       const { ref } = github.context;
       const pivotalId = getPivotalId(ref);
       console.log("Log: pivotalId ", pivotalId);
+
       if (!pivotalId) {
         core.setFailed("Pivotal id is missing in your branch.");
       }
+
       const storyDetails = await getStoryDetails(pivotalId);
       const { project_id, id } = storyDetails;
       if (id && project_id) {
@@ -87,14 +93,14 @@ async function run() {
     if (!projectName) {
       core.setFailed("Could not get project name from the pivotal id");
     }
-    const prNumber = getPrNumber();
+    const prNumber = await getPrNumber();
     if (!prNumber) {
       core.setFailed("Could not get pull request number from context, exiting");
     }
     const client = new github.GitHub(GITHUB_TOKEN);
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
-    addLabels(client, 188, label);
+    addLabels(client, prNumber, label);
     core.setFailed("fail to try rerun");
   } catch (error) {
     core.setFailed(error.message);
