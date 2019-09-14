@@ -29,7 +29,9 @@ name: PR lint
 
 `github-token` and `pivotal-token` are required for PR Lint to work. You can add these token under github [secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
+## How to contribute
 
+Follow the instructions given [here](https://help.github.com/en/articles/creating-a-javascript-action#commit-and-push-your-action-to-github)
 
 ## FAQs
 
