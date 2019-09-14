@@ -5,6 +5,7 @@ const axios = require("axios");
 async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
+    console.log(github.context)
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
@@ -30,12 +31,12 @@ async function run() {
       return await request.get(`/projects/${projectId}`).then(res => res.data);
     };
 
-    const addLabels = async (client, prNumber, labels) => {
+    const addLabels = async (client, prNumber, label) => {
       await client.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: prNumber,
-        labels: labels
+        labels: label
       });
     };
 
@@ -78,7 +79,9 @@ async function run() {
       core.setFailed("Could not get pull request number from context, exiting");
     }
     const client = new github.GitHub(token);
-    addLabels(client, prNumber, [projectName]);
+    // Jarvis POD -> jarvis
+    const label = projectName.split(' ')[0].toLowerCase();
+    addLabels(client, prNumber, label);
     core.setFailed("fail to try rerun");
   } catch (error) {
     core.setFailed(error.message);
