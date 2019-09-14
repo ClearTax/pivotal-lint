@@ -1,49 +1,92 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const axios = require('axios');
+const core = require("@actions/core");
+const github = require("@actions/github");
+const axios = require("axios");
 
-const { PIVOTAL_TOKEN, PIVOTAL_PROJECT_ID } = process.env;
+const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
 const request = axios.create({
   baseURL: `https://www.pivotaltracker.com/services/v5`,
-  timeout: 10000, // search could be really slow in pivotal
-  headers: { 'X-TrackerToken': PIVOTAL_TOKEN },
+  timeout: 2000,
+  headers: { "X-TrackerToken": PIVOTAL_TOKEN }
 });
 
 const getPivotalId = branch => {
   const match = branch.match(/\d{9}/);
-  if(match && match.length) {
+  if (match && match.length) {
     return match[0];
   }
-  return '';
-}
+  return "";
+};
 
 const getStoryDetails = async storyId => {
   return await request.get(`/stories/${storyId}`).then(res => res.data);
-}
+};
+
+const getProjectDetails = async projectId => {
+  return await request.get(`/projects/${projectId}`).then(res => res.data);
+};
+
+const addLabels = async (client, prNumber, labels) => {
+  await client.issues.addLabels({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: prNumber,
+    labels: labels
+  });
+};
+
+const getPrNumber = () => {
+  const pullRequest = github.context.payload.pull_request;
+  if (pullRequest) {
+    return pullRequest.number;
+  }
+  return undefined;
+};
 
 const checkPivotal = async () => {
-  const { ref = '168317333' } = github.context;
+  const { ref } = github.context;
   const pivotalId = getPivotalId(ref);
-  console.log('Log: pivotalId ', pivotalId );
-  if(!pivotalId) {
-    core.setFailed('Pivotal id is missing in your branch.');
+  console.log("Log: pivotalId ", pivotalId);
+  if (!pivotalId) {
+    core.setFailed("Pivotal id is missing in your branch.");
+    return false;
   }
   const storyDetails = await getStoryDetails(pivotalId);
-  console.log(storyDetails)
+  const { project_id, id } = storyDetails;
+  if (id && project_id) {
+    const project = await getProjectDetails(project_id);
+    const { name } = project;
+    return name || false;
+  } else {
+    core.setFailed(
+      "Invalid pivotal story id. Please create a branch with a valid pivotal story"
+    );
+    return false;
+  }
+  return false;
+};
+
+async function run() {
+  try {
+    const token = core.getInput("github-token", { required: true });
+    const prNumber = getPrNumber();
+    if (!prNumber) {
+      console.log("Could not get pull request number from context, exiting");
+      return;
+    }
+
+    const projectName = await checkPivotal();
+    console.log("Log: run -> projectName ", projectName);
+    if (projectName) {
+      console.log("Could not get project name from the pivotal id");
+      return;
+    }
+    const client = new github.GitHub(token);
+    addLabels(client, prNumber, [projectName]);
+    core.setFailed("fail to try rerun");
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  // const nameToGreet = core.getInput('who-to-greet');
-  // console.log(`Hello ${nameToGreet}!`);
-  // const time = (new Date()).toTimeString();
-  // core.setOutput("time", time);
-
-  // Get the JSON webhook payload for the event that triggered the workflow
-  console.log(JSON.stringify(github.context, undefined, 2));
-  checkPivotal();
-  core.setFailed('fail to try rerun');
-} catch (error) {
-  core.setFailed(error.message);
-}
+run();
