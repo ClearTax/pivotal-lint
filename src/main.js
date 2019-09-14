@@ -5,10 +5,8 @@ const axios = require("axios");
 async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
-    console.log('check github token', typeof token , token.length);
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
-    console.log('check pivotal token', typeof PIVOTAL_TOKEN, PIVOTAL_TOKEN.length);
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -55,7 +53,6 @@ async function run() {
       console.log("Log: pivotalId ", pivotalId);
       if (!pivotalId) {
         core.setFailed("Pivotal id is missing in your branch.");
-        return false;
       }
       const storyDetails = await getStoryDetails(pivotalId);
       const { project_id, id } = storyDetails;
@@ -72,16 +69,13 @@ async function run() {
     };
 
     const projectName = await checkPivotal();
-    console.log("Log: run -> projectName ", projectName);
-    if (projectName) {
-      console.log("Could not get project name from the pivotal id");
-      return;
+    console.log("Log: -> projectName ", projectName);
+    if (!projectName) {
+      core.setFailed("Could not get project name from the pivotal id");
     }
     const prNumber = getPrNumber();
-
     if (!prNumber) {
-      console.log("Could not get pull request number from context, exiting");
-      return;
+      core.setFailed("Could not get pull request number from context, exiting");
     }
     const client = new github.GitHub(token);
     addLabels(client, prNumber, [projectName]);
