@@ -69,6 +69,8 @@ const checkPivotal = async () => {
 async function run() {
   try {
     const token = core.getInput("github-token", { required: true });
+    const githubContext = core.getInput('github-context');
+    console.log(JSON.stringify(githubContext));
     const prNumber = getPrNumber();
     if (!prNumber) {
       console.log("Could not get pull request number from context, exiting");
