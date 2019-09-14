@@ -4,21 +4,17 @@ const axios = require("axios");
 
 async function run() {
   try {
-    const token = core.getInput("github-token", { required: true });
-    console.log(github.context);
+    const GITHUB_TOKEN = core.getInput("github-token", { required: true });
     const {
-      actor,
-      sha,
       payload: {
-        repository: { name }
-      }
+        repository: { name },
+        organization: { login }
+      },
     } = github.context;
-    const data = {
-      owner: actor,
-      sha,
+    const repoDetails = {
+      owner: login,
       repo: name
     };
-    console.log(data);
 
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
 
@@ -45,13 +41,16 @@ async function run() {
     };
 
     const addLabels = async (client, prNumber, label) => {
-      const res = await client.issues.addLabels({
-        owner: data.owner,
-        repo: data.repo,
-        issue_number: prNumber,
-        labels: label
-      });
-      console.log(res);
+      try {
+        const res = await client.issues.addLabels({
+          ...repoDetails,
+          issue_number: prNumber,
+          labels: [label]
+        });
+      }
+      catch(error) {
+        console.log(error)
+      }
     };
 
     const getPrNumber = () => {
@@ -88,11 +87,11 @@ async function run() {
     if (!projectName) {
       core.setFailed("Could not get project name from the pivotal id");
     }
-    // const prNumber = getPrNumber();
-    // if (!prNumber) {
-    //   core.setFailed("Could not get pull request number from context, exiting");
-    // }
-    const client = new github.GitHub(token);
+    const prNumber = getPrNumber();
+    if (!prNumber) {
+      core.setFailed("Could not get pull request number from context, exiting");
+    }
+    const client = new github.GitHub(GITHUB_TOKEN);
     // Jarvis POD -> jarvis
     const label = projectName.split(" ")[0].toLowerCase();
     addLabels(client, 188, label);
