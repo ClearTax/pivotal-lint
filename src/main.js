@@ -9,6 +9,7 @@ async function run() {
       payload: { repository },
       sha
     } = github.context;
+    console.log(github.context)
 
     const repoDetails = {
       owner: repository.owner.name,
