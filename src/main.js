@@ -14,6 +14,17 @@ const getPivotalId = branch => {
   return "";
 };
 
+const LABELS = {
+  HOTFIX_PRE_PROD: "HOTFIX-PRE-PROD",
+  HOTFIX_PROD: "HOTFIX-PROD"
+};
+
+const getHofixLabel = baseBranch => {
+  if (!baseBranch) return "";
+  if (baseBranch.includes("release/v")) return LABELS.HOTFIX_PRE_PROD;
+  if (baseBranch.includes("production-release")) return LABELS.HOTFIX_PROD;
+};
+
 async function run() {
   try {
     const PIVOTAL_TOKEN = core.getInput("pivotal-token", { required: true });
@@ -21,6 +32,7 @@ async function run() {
 
     // it is easier to get from the workflow context
     const headBranch = core.getInput("head-branch", { required: true });
+    const baseBranch = core.getInput("base-branch", { required: true });
     const client = new github.GitHub(GITHUB_TOKEN);
 
     const {
@@ -57,14 +69,14 @@ async function run() {
      * Add the specified label to the PR
      * @param {object} client
      * @param {string} prNumber
-     * @param {string[]} label
+     * @param {string[]} labels
      */
-    const addLabels = async (client, prNumber, label) => {
+    const addLabels = async (client, prNumber, labels) => {
       try {
         await client.issues.addLabels({
           ...repoDetails,
           issue_number: prNumber,
-          labels: [label]
+          labels: labels
         });
       } catch (error) {
         core.setFailed(error.message);
@@ -109,8 +121,11 @@ async function run() {
       core.setFailed("Could not get pull request number from context, exiting");
     }
     // Jarvis POD -> jarvis
-    const label = projectName.split(" ")[0].toLowerCase();
-    addLabels(client, prNumber, label);
+    const podLabel = projectName.split(" ")[0].toLowerCase();
+    const hotfixLabel = getHofixLabel(baseBranch);
+    const labels = [podLabel, hotfixLabel].filter(label => label);
+    console.log("Adding lables -> ", labels);
+    addLabels(client, prNumber, labels);
   } catch (error) {
     core.setFailed(error.message);
   }
