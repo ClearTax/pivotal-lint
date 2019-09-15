@@ -21,7 +21,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build && git add lib/index.js"
+      "pre-push": "npm run build && git add lib/index.js"
     }
   },
   "dependencies": {
