@@ -7,11 +7,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: "npm install"
-      # Not running ci to match with the build in dev env. npm ci changes the build file.
-      run: npm i
+    - name: "npm ci"
+      run: npm ci
 
-    - name: "npm build"
+    - name: "npm run build"
       run: npm run build
 
     - name: "npm run test"

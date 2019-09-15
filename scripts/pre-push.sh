@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# npm ci
+npm ci
+
 # run build
 echo "Running npm build.."
 npm run build
