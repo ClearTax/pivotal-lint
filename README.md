@@ -3,7 +3,11 @@
 PR Lint checks for a pivotal story id in the branch name. It uses the pivotal API so any random
 pivotal id will lead to check failure.
 
-PR Lint will also add the team label based on the pivotal project board for the given story
+PR Lint will also add the following labels to the PR
+
+- `escher | ultron | jarvis | neo | etc` - Based on the pivotal board
+- `HOTFIX-PROD` - if the PR is raised against `production-release`
+- `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
 
 ### How to use PR Lint?
 
