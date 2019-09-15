@@ -63,14 +63,14 @@ const pivotal = pivotalToken => {
    * Check the pivotal story using the pivotal API
    */
   const getProjectName = async branchName => {
-    console.log("Checking pivotal id for ", branchName);
+    console.log("Checking pivotal id for -> ", branchName);
     const pivotalId = getPivotalId(branchName);
 
     if (!pivotalId) {
       core.setFailed("Pivotal id is missing in your branch.");
       return false;
     }
-    console.log("pivotalId -> ", pivotalId);
+    console.log("Pivotal id -> ", pivotalId);
 
     const storyDetails = await getStoryDetails(pivotalId);
     const { project_id, id } = storyDetails;
@@ -106,10 +106,17 @@ const addLabels = async (client, labelData) => {
   }
 };
 
+/**
+ * Remove invalid entries from an array
+ * @param {Array} arr
+ */
+const filterArray = arr => arr.filter(x => x);
+
 module.exports = {
   getPivotalId,
   getHofixLabel,
   pivotal,
   addLabels,
-  getPodLabel
+  getPodLabel,
+  filterArray
 };
