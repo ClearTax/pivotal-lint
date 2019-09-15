@@ -34,6 +34,7 @@ async function run() {
     const headBranch = core.getInput("head-branch", { required: true });
     const baseBranch = core.getInput("base-branch", { required: true });
     const client = new github.GitHub(GITHUB_TOKEN);
+    console.log(github)
 
     const {
       payload: { repository, organization, pull_request },
