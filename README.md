@@ -23,7 +23,7 @@ name: PR lint
     runs-on: ubuntu-latest
     steps:
     - name: Check pivotal story in branch name and add POD label
-      uses: cleartax/pr-lint@v2
+      uses: cleartax/pr-lint@master
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
@@ -47,7 +47,6 @@ Pivotal id is required in order to
   - Help us retrospect the sprint progress 📈
 
 </details>
-
 
 <details>
      <summary>Is there a way to get around this?</summary>
