@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # run build
+echo "Running npm build.."
 npm run build
 
 git diff --exit-code --stat -- lib ':!node_modules' \
