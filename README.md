@@ -23,7 +23,6 @@ name: PR lint
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
-        head-branch: ${{ github.head_ref }}
 
 ```
 
@@ -37,9 +36,9 @@ Follow the instructions given [here](https://help.github.com/en/articles/creatin
 
 <details>
    <summary>Why pivotal id is required?</summary>
- 
+
 Pivotal id is required in order to
-  - Automate the change logs and release notes ⚙️ 
+  - Automate the change logs and release notes ⚙️
   - Automate alerts to the QA and other external stake-holders 🔊
   - Help us retrospect the sprint progress 📈
 
@@ -54,6 +53,6 @@ Pivotal id is required in order to
 
 <details>
     <summary>Are there any tools to automate this?</summary>
-    
+
 Yes, check out [pivotal-flow](https://www.npmjs.com/package/pivotal-flow) 🚀
 </details>

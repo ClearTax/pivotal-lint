@@ -19,6 +19,10 @@ const LABELS = {
   HOTFIX_PROD: "HOTFIX-PROD"
 };
 
+/**
+ * Return a hotfix label based on base branch type
+ * @param {string} baseBranch
+ */
 const getHofixLabel = baseBranch => {
   if (!baseBranch) return "";
   if (baseBranch.includes("release/v")) return LABELS.HOTFIX_PRE_PROD;
@@ -40,23 +44,13 @@ async function run() {
       owner: organization.login,
       repo: repository.name
     };
-
-    console.log(
-      "Log: run -> pull_request",
-      pull_request,
-    );
     const { base, head } = pull_request;
-    console.log(
-      "Log: run -> base_ref",
-      base.ref,
-    );
-    console.log(
-      "Log: run -> head_ref",
-      head.ref,
-    );
-
     const headBranch = head.ref;
     const baseBranch = base.ref;
+
+    console.log("Base branch -> ", baseBranch);
+    console.log("Head branch -> ", headBranch);
+
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
       timeout: 2000,
