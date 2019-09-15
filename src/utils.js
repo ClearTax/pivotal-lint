@@ -68,7 +68,7 @@ const pivotal = pivotalToken => {
 
     if (!pivotalId) {
       core.setFailed("Pivotal id is missing in your branch.");
-      return false;
+      process.exit(1);
     }
     console.log("Pivotal id -> ", pivotalId);
 
@@ -82,7 +82,7 @@ const pivotal = pivotalToken => {
       core.setFailed(
         "Invalid pivotal story id. Please create a branch with a valid pivotal story"
       );
-      return false;
+      process.exit(1);
     }
   };
 
@@ -103,6 +103,7 @@ const addLabels = async (client, labelData) => {
     await client.issues.addLabels(labelData);
   } catch (error) {
     core.setFailed(error.message);
+    process.exit(1);
   }
 };
 

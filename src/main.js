@@ -43,6 +43,7 @@ async function run() {
     addLabels(client, labelData);
   } catch (error) {
     core.setFailed(error.message);
+    process.exit(1);
   }
 }
 
