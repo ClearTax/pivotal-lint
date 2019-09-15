@@ -34,16 +34,21 @@ async function run() {
     const headBranch = core.getInput("head-branch", { required: true });
     const baseBranch = core.getInput("base-branch", { required: true });
     const client = new github.GitHub(GITHUB_TOKEN);
-    console.log(github)
 
     const {
-      payload: { repository, organization, pull_request },
+      payload: { repository, organization, pull_request }
     } = github.context;
 
     const repoDetails = {
       owner: organization.login,
       repo: repository.name
     };
+    console.log(
+      "Log: run -> repository, organization, pull_request ",
+      repository,
+      organization,
+      pull_request
+    );
 
     const request = axios.create({
       baseURL: `https://www.pivotaltracker.com/services/v5`,
