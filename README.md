@@ -3,7 +3,11 @@
 PR Lint checks for a pivotal story id in the branch name. It uses the pivotal API so any random
 pivotal id will lead to check failure.
 
-PR Lint will also add the team label based on the pivotal project board for the given story
+PR Lint will also add the following labels to the PR
+
+- `escher | ultron | jarvis | neo | etc` - Based on the pivotal board
+- `HOTFIX-PROD` - if the PR is raised against `production-release`
+- `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
 
 ### How to use PR Lint?
 
@@ -19,11 +23,10 @@ name: PR lint
     runs-on: ubuntu-latest
     steps:
     - name: Check pivotal story in branch name and add POD label
-      uses: cleartax/pr-lint@v1
+      uses: cleartax/pr-lint@v2
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
-        head-branch: ${{ github.head_ref }}
 
 ```
 
@@ -37,9 +40,9 @@ Follow the instructions given [here](https://help.github.com/en/articles/creatin
 
 <details>
    <summary>Why pivotal id is required?</summary>
- 
+
 Pivotal id is required in order to
-  - Automate the change logs and release notes ⚙️ 
+  - Automate the change logs and release notes ⚙️
   - Automate alerts to the QA and other external stake-holders 🔊
   - Help us retrospect the sprint progress 📈
 
@@ -54,6 +57,6 @@ Pivotal id is required in order to
 
 <details>
     <summary>Are there any tools to automate this?</summary>
-    
+
 Yes, check out [pivotal-flow](https://www.npmjs.com/package/pivotal-flow) 🚀
 </details>
