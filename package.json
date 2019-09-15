@@ -21,7 +21,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-push": "./scripts/pre-push.js"
+      "pre-push": "./scripts/pre-push.sh"
     }
   },
   "dependencies": {
