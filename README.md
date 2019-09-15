@@ -19,7 +19,7 @@ name: PR lint
     runs-on: ubuntu-latest
     steps:
     - name: Check pivotal story in branch name and add POD label
-      uses: cleartax/pr-lint@v1
+      uses: cleartax/pr-lint@v2
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
