@@ -111,7 +111,7 @@ const addLabels = async (client, labelData) => {
  * Remove invalid entries from an array
  * @param {Array} arr
  */
-const filterArray = arr => arr.filter(x => x);
+const filterArray = arr => ((arr && arr.length) ? arr.filter(x => x) : []);
 
 /**
  * Check if the PR is an automated one created by a bot
@@ -120,7 +120,7 @@ const filterArray = arr => arr.filter(x => x);
  * @example isBotPr('dependabot') -> true
  * @example isBotPr('feature/update_123456789') -> false
  */
-const isBotPr = branch => branch.includes('dependabot');
+const isBotPr = branch => (branch ? branch.includes("dependabot") : false);
 
 module.exports = {
   getPivotalId,

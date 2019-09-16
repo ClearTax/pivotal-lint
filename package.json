@@ -6,7 +6,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "ncc build src/main.js -o lib",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
