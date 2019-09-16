@@ -5,7 +5,7 @@ pivotal id will lead to check failure.
 
 PR Lint will also add the following labels to the PR
 
-- `escher | ultron | jarvis | neo | etc` - Based on the pivotal board
+- Team name label based on the pivotal board name. if your pivotal board name is `Escher POD` then it will add `escher` as a label. Pivotal board name is fetched from the given story id.
 - `HOTFIX-PROD` - if the PR is raised against `production-release`
 - `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
 
@@ -32,7 +32,7 @@ name: PR lint
 
 `github-token` and `pivotal-token` are required for PR Lint to work. You can add these token under github [secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
-## How to contribute
+## How to contribute?
 
 Follow the instructions given [here](https://help.github.com/en/articles/creating-a-javascript-action#commit-and-push-your-action-to-github)
 
