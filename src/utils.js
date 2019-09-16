@@ -25,7 +25,7 @@ const LABELS = {
 const getHofixLabel = baseBranch => {
   if (!baseBranch) return "";
   if (baseBranch.includes("release/v")) return LABELS.HOTFIX_PRE_PROD;
-  if (baseBranch.includes("production-release")) return LABELS.HOTFIX_PROD;
+  if (baseBranch.includes("production")) return LABELS.HOTFIX_PROD;
 };
 
 /**
