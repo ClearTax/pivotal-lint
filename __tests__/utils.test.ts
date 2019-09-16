@@ -1,13 +1,7 @@
-const utils = require("../src/utils");
-
-const {
-  pivotal,
-  getHofixLabel,
-  addLabels,
-  getPodLabel,
+import {
   filterArray,
   isBotPr
-} = utils;
+} from '../src/utils';
 
 describe("isBotPr()", () => {
   it("should return true", () => {
@@ -25,10 +19,6 @@ describe("isBotPr()", () => {
   it("should return false with null input", () => {
     expect(isBotPr(null)).toBe(false);
   });
-
-  it("should return false with undefined input", () => {
-    expect(isBotPr()).toBe(false);
-  });
 });
 
 describe("filterArray()", () => {
@@ -39,8 +29,6 @@ describe("filterArray()", () => {
   it("should return a empty array", () => {
     expect(filterArray([])).toEqual([]);
   });
-
-  it("should return a empty array with undefined input", () => {
-    expect(filterArray()).toEqual([]);
-  });
 });
+
+

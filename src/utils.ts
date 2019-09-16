@@ -1,11 +1,13 @@
-const axios = require("axios");
-const core = require("@actions/core");
+import axios from 'axios';
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import { IssuesAddLabelsParams,  } from '@octokit/rest';
 
 /**
  *  Extract pivotal id from the branch name
  * @param {string} branch
  */
-const getPivotalId = branch => {
+export const getPivotalId = (branch: string): string => {
   const match = branch.match(/\d{9}/);
   if (match && match.length) {
     return match[0];
@@ -22,10 +24,10 @@ const LABELS = {
  * Return a hotfix label based on base branch type
  * @param {string} baseBranch
  */
-const getHofixLabel = baseBranch => {
-  if (!baseBranch) return "";
+export const getHofixLabel = (baseBranch: string): string => {
   if (baseBranch.includes("release/v")) return LABELS.HOTFIX_PRE_PROD;
   if (baseBranch.includes("production")) return LABELS.HOTFIX_PROD;
+  return "";
 };
 
 /**
@@ -33,11 +35,11 @@ const getHofixLabel = baseBranch => {
  * @param {string} boardName
  * @example Jarvis POD -> jarvis
  */
-const getPodLabel = boardName => {
+export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(" ")[0].toLowerCase() : "";
 };
 
-const pivotal = pivotalToken => {
+export const pivotal = (pivotalToken: string) => {
   const request = axios.create({
     baseURL: `https://www.pivotaltracker.com/services/v5`,
     timeout: 2000,
@@ -47,7 +49,7 @@ const pivotal = pivotalToken => {
   /**
    * Get story details based on story id
    */
-  const getStoryDetails = async storyId => {
+  const getStoryDetails = async (storyId: string) => {
     return await request.get(`/stories/${storyId}`).then(res => res.data);
   };
 
@@ -55,14 +57,14 @@ const pivotal = pivotalToken => {
    * Get project details based on project id
    * @param {string} projectId
    */
-  const getProjectDetails = async projectId => {
+  const getProjectDetails = async (projectId: string) => {
     return await request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
   /**
    * Check the pivotal story using the pivotal API
    */
-  const getProjectName = async branchName => {
+  const getProjectName = async (branchName: string) => {
     console.log("Checking pivotal id for -> ", branchName);
     const pivotalId = getPivotalId(branchName);
 
@@ -98,7 +100,7 @@ const pivotal = pivotalToken => {
  * @param {object} client
  * @param {object} labelData
  */
-const addLabels = async (client, labelData) => {
+export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabelsParams) => {
   try {
     await client.issues.addLabels(labelData);
   } catch (error) {
@@ -111,7 +113,7 @@ const addLabels = async (client, labelData) => {
  * Remove invalid entries from an array
  * @param {Array} arr
  */
-const filterArray = arr => ((arr && arr.length) ? arr.filter(x => x) : []);
+export const filterArray = (arr: string[]) => ((arr && arr.length) ? arr.filter(x => x) : []);
 
 /**
  * Check if the PR is an automated one created by a bot
@@ -120,14 +122,4 @@ const filterArray = arr => ((arr && arr.length) ? arr.filter(x => x) : []);
  * @example isBotPr('dependabot') -> true
  * @example isBotPr('feature/update_123456789') -> false
  */
-const isBotPr = branch => (branch ? branch.includes("dependabot") : false);
-
-module.exports = {
-  getPivotalId,
-  getHofixLabel,
-  pivotal,
-  addLabels,
-  getPodLabel,
-  filterArray,
-  isBotPr
-};
+export const isBotPr = (branch: string) => (branch ? branch.includes("dependabot") : false);
