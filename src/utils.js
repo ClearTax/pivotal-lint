@@ -113,11 +113,21 @@ const addLabels = async (client, labelData) => {
  */
 const filterArray = arr => arr.filter(x => x);
 
+/**
+ * Check if the PR is an automated one created by a bot
+ * Can be extended to include other bots later
+ * @param {string} branch
+ * @example isBotPr('dependabot') -> true
+ * @example isBotPr('feature/update_123456789') -> false
+ */
+const isBotPr = branch => branch.includes('dependabot');
+
 module.exports = {
   getPivotalId,
   getHofixLabel,
   pivotal,
   addLabels,
   getPodLabel,
-  filterArray
+  filterArray,
+  isBotPr
 };

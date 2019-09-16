@@ -2,7 +2,14 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const utils = require("./utils");
 
-const { pivotal, getHofixLabel, addLabels, getPodLabel, filterArray } = utils;
+const {
+  pivotal,
+  getHofixLabel,
+  addLabels,
+  getPodLabel,
+  filterArray,
+  isBotPr
+} = utils;
 
 async function run() {
   try {
@@ -20,6 +27,11 @@ async function run() {
 
     console.log("Base branch -> ", baseBranch);
     console.log("Head branch -> ", headBranch);
+
+    if(isBotPr(headBranch)) {
+      console.log("This is an automated PR so ignoring rest of the checks.")
+      process.exit(0);
+    }
 
     const { getProjectName } = pivotal(PIVOTAL_TOKEN);
 
