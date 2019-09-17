@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams  } from '@octokit/rest';
+import { IssuesAddLabelsParams } from '@octokit/rest';
 
 /**
  *  Extract pivotal id from the branch name
@@ -12,12 +12,12 @@ export const getPivotalId = (branch: string): string => {
   if (match && match.length) {
     return match[0];
   }
-  return "";
+  return '';
 };
 
 export const LABELS = {
-  HOTFIX_PRE_PROD: "HOTFIX-PRE-PROD",
-  HOTFIX_PROD: "HOTFIX-PROD"
+  HOTFIX_PRE_PROD: 'HOTFIX-PRE-PROD',
+  HOTFIX_PROD: 'HOTFIX-PROD',
 };
 
 /**
@@ -25,9 +25,9 @@ export const LABELS = {
  * @param {string} baseBranch
  */
 export const getHofixLabel = (baseBranch: string): string => {
-  if (baseBranch.includes("release/v")) return LABELS.HOTFIX_PRE_PROD;
-  if (baseBranch.includes("production")) return LABELS.HOTFIX_PROD;
-  return "";
+  if (baseBranch.includes('release/v')) return LABELS.HOTFIX_PRE_PROD;
+  if (baseBranch.includes('production')) return LABELS.HOTFIX_PROD;
+  return '';
 };
 
 /**
@@ -36,14 +36,14 @@ export const getHofixLabel = (baseBranch: string): string => {
  * @example Jarvis POD -> jarvis
  */
 export const getPodLabel = (boardName: string): string => {
-  return boardName ? boardName.split(" ")[0].toLowerCase() : "";
+  return boardName ? boardName.split(' ')[0].toLowerCase() : '';
 };
 
 export const pivotal = (pivotalToken: string) => {
   const request = axios.create({
     baseURL: `https://www.pivotaltracker.com/services/v5`,
     timeout: 2000,
-    headers: { "X-TrackerToken": pivotalToken }
+    headers: { 'X-TrackerToken': pivotalToken },
   });
 
   /**
@@ -65,14 +65,14 @@ export const pivotal = (pivotalToken: string) => {
    * Check the pivotal story using the pivotal API
    */
   const getProjectName = async (branchName: string) => {
-    console.log("Checking pivotal id for -> ", branchName);
+    console.log('Checking pivotal id for -> ', branchName);
     const pivotalId = getPivotalId(branchName);
 
     if (!pivotalId) {
-      core.setFailed("Pivotal id is missing in your branch.");
+      core.setFailed('Pivotal id is missing in your branch.');
       process.exit(1);
     }
-    console.log("Pivotal id -> ", pivotalId);
+    console.log('Pivotal id -> ', pivotalId);
 
     const storyDetails = await getStoryDetails(pivotalId);
     const { project_id, id } = storyDetails;
@@ -82,7 +82,7 @@ export const pivotal = (pivotalToken: string) => {
       return name;
     } else {
       core.setFailed(
-        "Invalid pivotal story id. Please create a branch with a valid pivotal story"
+        'Invalid pivotal story id. Please create a branch with a valid pivotal story'
       );
       process.exit(1);
     }
@@ -91,7 +91,7 @@ export const pivotal = (pivotalToken: string) => {
   return {
     getProjectName,
     getStoryDetails,
-    getProjectDetails
+    getProjectDetails,
   };
 };
 
@@ -100,7 +100,10 @@ export const pivotal = (pivotalToken: string) => {
  * @param {object} client
  * @param {IssuesAddLabelsParams} labelData
  */
-export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabelsParams) => {
+export const addLabels = async (
+  client: github.GitHub,
+  labelData: IssuesAddLabelsParams
+) => {
   try {
     await client.issues.addLabels(labelData);
   } catch (error) {
@@ -113,7 +116,8 @@ export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabel
  * Remove invalid entries from an array
  * @param {Array} arr
  */
-export const filterArray = (arr: string[]): string[] => ((arr && arr.length) ? arr.filter(x => x.trim()) : []);
+export const filterArray = (arr: string[]): string[] =>
+  arr && arr.length ? arr.filter(x => x.trim()) : [];
 
 /**
  * Check if the PR is an automated one created by a bot
@@ -122,4 +126,5 @@ export const filterArray = (arr: string[]): string[] => ((arr && arr.length) ? a
  * @example isBotPr('dependabot') -> true
  * @example isBotPr('feature/update_123456789') -> false
  */
-export const isBotPr = (branch: string): boolean => (branch ? branch.includes("dependabot") : false);
+export const isBotPr = (branch: string): boolean =>
+  branch ? branch.includes('dependabot') : false;

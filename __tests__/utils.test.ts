@@ -4,30 +4,29 @@ import {
   getHofixLabel,
   getPivotalId,
   getPodLabel,
-  LABELS
+  LABELS,
 } from '../src/utils';
 
-describe("isBotPr()", () => {
-  it("should return true", () => {
-    expect(isBotPr("dependabot")).toBeTruthy();
+describe('isBotPr()', () => {
+  it('should return true', () => {
+    expect(isBotPr('dependabot')).toBeTruthy();
   });
 
-  it("should return false", () => {
-    expect(isBotPr("feature/awesomeNewFeature")).toBeFalsy();
+  it('should return false', () => {
+    expect(isBotPr('feature/awesomeNewFeature')).toBeFalsy();
   });
 
-  it("should return false with empty input", () => {
-    expect(isBotPr("")).toBeFalsy();
+  it('should return false with empty input', () => {
+    expect(isBotPr('')).toBeFalsy();
   });
-
 });
 
-describe("filterArray()", () => {
-  it("should return a valid array", () => {
-    expect(filterArray(["123", "", "  "])).toEqual(["123"]);
+describe('filterArray()', () => {
+  it('should return a valid array', () => {
+    expect(filterArray(['123', '', '  '])).toEqual(['123']);
   });
 
-  it("should return a empty array with empty input", () => {
+  it('should return a empty array with empty input', () => {
     expect(filterArray([])).toEqual([]);
   });
 });
@@ -72,4 +71,3 @@ describe('getPodLabel()', () => {
     expect(getPodLabel('')).toBe('');
   });
 });
-
