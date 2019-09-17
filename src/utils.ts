@@ -75,8 +75,9 @@ export const pivotal = (pivotalToken: string) => {
     console.log('Pivotal id -> ', pivotalId);
 
     const storyDetails = await getStoryDetails(pivotalId);
-    const { project_id, id } = storyDetails;
-    if (id && project_id) {
+    const { project_id, id, url } = storyDetails;
+    if (id && project_id && url) {
+      console.log('Story url ->', url);
       const project = await getProjectDetails(project_id);
       const { name } = project;
       return name;
