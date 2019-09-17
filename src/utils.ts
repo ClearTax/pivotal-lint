@@ -50,7 +50,7 @@ export const pivotal = (pivotalToken: string) => {
    * Get story details based on story id
    */
   const getStoryDetails = async (storyId: string) => {
-    return await request.get(`/stories/${storyId}`).then(res => res.data);
+    return request.get(`/stories/${storyId}`).then(res => res.data);
   };
 
   /**
@@ -58,7 +58,7 @@ export const pivotal = (pivotalToken: string) => {
    * @param {string} projectId
    */
   const getProjectDetails = async (projectId: string) => {
-    return await request.get(`/projects/${projectId}`).then(res => res.data);
+    return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
   /**

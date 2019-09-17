@@ -8,11 +8,11 @@ import {
 } from '../src/utils';
 
 describe('isBotPr()', () => {
-  it('should return true', () => {
+  it('should return true for dependabot PR', () => {
     expect(isBotPr('dependabot')).toBeTruthy();
   });
 
-  it('should return false', () => {
+  it('should return false for non bot PR', () => {
     expect(isBotPr('feature/awesomeNewFeature')).toBeFalsy();
   });
 
@@ -32,15 +32,15 @@ describe('filterArray()', () => {
 });
 
 describe('getHotFixLabel()', () => {
-  it('should return empty string', () => {
+  it('should return empty string for master branch', () => {
     expect(getHofixLabel('master')).toEqual('');
   });
 
-  it('should return HOTFIX-PROD', () => {
+  it('should return HOTFIX-PROD for production branch', () => {
     expect(getHofixLabel('production-release')).toEqual(LABELS.HOTFIX_PROD);
   });
 
-  it('should return HOTFIX-PRE-PROD', () => {
+  it('should return HOTFIX-PRE-PROD for release branch', () => {
     expect(getHofixLabel('release/v')).toEqual(LABELS.HOTFIX_PRE_PROD);
   });
 
@@ -63,11 +63,11 @@ describe('getPivotalId()', () => {
 });
 
 describe('getPodLabel()', () => {
-  it('should return a single word', () => {
-    expect(getPodLabel('Jarvis POD')).toBe('jarvis');
+  it('should return a single word from a multi word board name', () => {
+    expect(getPodLabel('Jarvis POD')).toEqual('jarvis');
   });
 
   it('should return an empty string', () => {
-    expect(getPodLabel('')).toBe('');
+    expect(getPodLabel('')).toEqual('');
   });
 });
