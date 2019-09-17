@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams,  } from '@octokit/rest';
+import { IssuesAddLabelsParams  } from '@octokit/rest';
 
 /**
  *  Extract pivotal id from the branch name
@@ -15,7 +15,7 @@ export const getPivotalId = (branch: string): string => {
   return "";
 };
 
-const LABELS = {
+export const LABELS = {
   HOTFIX_PRE_PROD: "HOTFIX-PRE-PROD",
   HOTFIX_PROD: "HOTFIX-PROD"
 };
@@ -98,7 +98,7 @@ export const pivotal = (pivotalToken: string) => {
 /**
  * Add the specified label to the PR
  * @param {object} client
- * @param {object} labelData
+ * @param {IssuesAddLabelsParams} labelData
  */
 export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabelsParams) => {
   try {
@@ -113,7 +113,7 @@ export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabel
  * Remove invalid entries from an array
  * @param {Array} arr
  */
-export const filterArray = (arr: string[]) => ((arr && arr.length) ? arr.filter(x => x) : []);
+export const filterArray = (arr: string[]): string[] => ((arr && arr.length) ? arr.filter(x => x.trim()) : []);
 
 /**
  * Check if the PR is an automated one created by a bot
@@ -122,4 +122,4 @@ export const filterArray = (arr: string[]) => ((arr && arr.length) ? arr.filter(
  * @example isBotPr('dependabot') -> true
  * @example isBotPr('feature/update_123456789') -> false
  */
-export const isBotPr = (branch: string) => (branch ? branch.includes("dependabot") : false);
+export const isBotPr = (branch: string): boolean => (branch ? branch.includes("dependabot") : false);
