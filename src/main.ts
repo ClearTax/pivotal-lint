@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams } from '@octokit/rest';
+import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
 
 import {
   pivotal,
@@ -9,12 +9,16 @@ import {
   getPodLabel,
   filterArray,
   isBotPr,
+  updatePrDetails,
+  getPivotalId,
+  getPrDescription,
 } from './utils';
 
 async function run() {
   try {
-    const PIVOTAL_TOKEN = core.getInput('pivotal-token', { required: true });
-    const GITHUB_TOKEN = core.getInput('github-token', { required: true });
+    const PIVOTAL_TOKEN: string = core.getInput('pivotal-token', { required: true });
+    const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
+    const updateDescription: string = core.getInput('updateDescription');
 
     const {
       payload: { repository, organization, pull_request },
@@ -39,29 +43,54 @@ async function run() {
       process.exit(0);
     }
 
-    const { getProjectName } = pivotal(PIVOTAL_TOKEN);
+    const pivotalId = getPivotalId(headBranch);
+    if (!pivotalId) {
+      core.setFailed('Pivotal id is missing in your branch.');
+      process.exit(1);
+    }
 
-    const projectName: string = await getProjectName(headBranch);
-    console.log('Project name -> ', projectName);
+    const { getPivotalDetails } = pivotal(PIVOTAL_TOKEN);
+    const pivotalDetails = await getPivotalDetails(pivotalId);
+    if (pivotalDetails && pivotalDetails.project && pivotalDetails.story) {
+      const {
+        project: { name: projectName },
+        story,
+      } = pivotalDetails;
 
-    const podLabel: string = getPodLabel(projectName);
-    const hotfixLabel: string = getHofixLabel(baseBranch);
+      console.log('Project name -> ', projectName);
 
-    const labels: string[] = filterArray([podLabel, hotfixLabel]);
-    console.log('Adding lables -> ', labels);
+      const podLabel: string = getPodLabel(projectName);
+      const hotfixLabel: string = getHofixLabel(baseBranch);
 
-    const repo: string = repository ? repository.name : '';
-    const issue_number: number = pull_request ? pull_request.number : 0;
+      const labels: string[] = filterArray([podLabel, hotfixLabel]);
+      console.log('Adding lables -> ', labels);
 
-    const labelData: IssuesAddLabelsParams = {
-      owner: organization.login,
-      repo,
-      issue_number,
-      labels,
-    };
+      const repo: string = repository ? repository.name : '';
+      const { number: prNumber, body: prBody } = pull_request ? pull_request : { number: 0, body: '' };
 
-    const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
-    addLabels(client, labelData);
+      const labelData: IssuesAddLabelsParams = {
+        owner: organization.login,
+        repo,
+        issue_number: prNumber,
+        labels,
+      };
+
+      const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
+      addLabels(client, labelData);
+
+      if (updateDescription) {
+        const prData: PullsUpdateParams = {
+          owner: organization.login,
+          repo,
+          pull_number: prNumber,
+          body: getPrDescription(prBody, story),
+        };
+        updatePrDetails(client, prData);
+      }
+    } else {
+      core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
+      process.exit(1);
+    }
   } catch (error) {
     core.setFailed(error.message);
     process.exit(1);

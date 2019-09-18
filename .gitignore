@@ -11,7 +11,7 @@ lerna-debug.log*
 node_modules
 
 # local file for testing
-src/test.js
+src/localTest.ts
 
 # vs code custom settings
 .vscode
