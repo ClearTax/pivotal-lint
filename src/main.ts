@@ -18,7 +18,6 @@ async function run() {
   try {
     const PIVOTAL_TOKEN: string = core.getInput('pivotal-token', { required: true });
     const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
-    const updateDescription: string = core.getInput('updateDescription');
 
     const {
       payload: { repository, organization, pull_request },
@@ -78,15 +77,13 @@ async function run() {
       const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
       addLabels(client, labelData);
 
-      if (updateDescription) {
-        const prData: PullsUpdateParams = {
-          owner: organization.login,
-          repo,
-          pull_number: prNumber,
-          body: getPrDescription(prBody, story),
-        };
-        updatePrDetails(client, prData);
-      }
+      const prData: PullsUpdateParams = {
+        owner: organization.login,
+        repo,
+        pull_number: prNumber,
+        body: getPrDescription(prBody, story),
+      };
+      updatePrDetails(client, prData);
     } else {
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
       process.exit(1);
