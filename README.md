@@ -3,6 +3,10 @@
 PR Lint checks for a pivotal story id in the branch name. It uses the pivotal API so any random
 pivotal id will lead to check failure.
 
+It adds pivotal story details to the PR description
+
+![pr-lint](https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png)
+
 PR Lint will also add the following labels to the PR
 
 - Team name label based on the pivotal board name. if your pivotal board name is `Escher POD` then it will add `escher` as a label. Pivotal board name is fetched from the given story id.
@@ -39,7 +43,7 @@ Follow the instructions given [here](https://help.github.com/en/articles/creatin
 ## FAQs
 
 <details>
-   <summary>Why pivotal id is required?</summary>
+  <summary>Why pivotal id is required?</summary>
 
 Pivotal id is required in order to
   - Automate the change logs and release notes ⚙️
@@ -49,13 +53,13 @@ Pivotal id is required in order to
 </details>
 
 <details>
-     <summary>Is there a way to get around this?</summary>
+  <summary>Is there a way to get around this?</summary>
 
  Nope 🙅
 </details>
 
 <details>
-    <summary>Are there any tools to automate this?</summary>
+  <summary>Are there any tools to automate this?</summary>
 
 Yes, check out [pivotal-flow](https://www.npmjs.com/package/pivotal-flow) 🚀
 </details>
