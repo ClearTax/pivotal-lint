@@ -4,7 +4,7 @@ import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
 
 import {
   pivotal,
-  getHofixLabel,
+  getHotfixLabel,
   addLabels,
   getPodLabel,
   filterArray,
@@ -59,7 +59,7 @@ async function run() {
       console.log('Project name -> ', projectName);
 
       const podLabel: string = getPodLabel(projectName);
-      const hotfixLabel: string = getHofixLabel(baseBranch);
+      const hotfixLabel: string = getHotfixLabel(baseBranch);
 
       const labels: string[] = filterArray([podLabel, hotfixLabel]);
       console.log('Adding lables -> ', labels);

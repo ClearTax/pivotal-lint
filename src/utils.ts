@@ -24,7 +24,7 @@ export const LABELS = {
  * Return a hotfix label based on base branch type
  * @param {string} baseBranch
  */
-export const getHofixLabel = (baseBranch: string): string => {
+export const getHotfixLabel = (baseBranch: string): string => {
   if (baseBranch.includes('release/v')) return LABELS.HOTFIX_PRE_PROD;
   if (baseBranch.includes('production')) return LABELS.HOTFIX_PROD;
   return '';
