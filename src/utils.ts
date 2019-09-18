@@ -179,7 +179,7 @@ export const getStoryIcon = (storyType: string): string => {
  * @returns string
  */
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
-  const { url, id, story_type, estimate, labels, description } = story;
+  const { url, id, story_type, estimate, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
   return `
   <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
@@ -190,6 +190,10 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
       <tr>
         <th>Name</th>
         <th>Details</th>
+      </tr>
+      <tr>
+        <td>Title</td>
+        <td>${name}</td>
       </tr>
       <tr>
         <td>ID</td>
