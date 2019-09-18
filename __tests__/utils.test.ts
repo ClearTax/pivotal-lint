@@ -1,7 +1,7 @@
 import {
   filterArray,
   isBotPr,
-  getHofixLabel,
+  getHotfixLabel,
   getPivotalId,
   getPodLabel,
   LABELS,
@@ -33,19 +33,19 @@ describe('filterArray()', () => {
 
 describe('getHotFixLabel()', () => {
   it('should return empty string for master branch', () => {
-    expect(getHofixLabel('master')).toEqual('');
+    expect(getHotfixLabel('master')).toEqual('');
   });
 
   it('should return HOTFIX-PROD for production branch', () => {
-    expect(getHofixLabel('production-release')).toEqual(LABELS.HOTFIX_PROD);
+    expect(getHotfixLabel('production-release')).toEqual(LABELS.HOTFIX_PROD);
   });
 
   it('should return HOTFIX-PRE-PROD for release branch', () => {
-    expect(getHofixLabel('release/v')).toEqual(LABELS.HOTFIX_PRE_PROD);
+    expect(getHotfixLabel('release/v')).toEqual(LABELS.HOTFIX_PRE_PROD);
   });
 
   it('should return empty string with no input', () => {
-    expect(getHofixLabel('')).toEqual('');
+    expect(getHotfixLabel('')).toEqual('');
   });
 });
 
