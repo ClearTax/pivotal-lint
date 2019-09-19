@@ -251,7 +251,7 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
   <br />
 </details>
 <!--
-  do not remove this marker as it will break PR-lint's functionality.
+  do not remove this marker as it will break pr-lint's functionality.
   ${HIDDEN_MARKER}
 -->
 
