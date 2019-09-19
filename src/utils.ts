@@ -203,9 +203,11 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
         <td>Type</td>
         <td>${getStoryIcon(story_type)} ${story_type}</td>
       </tr>
-      <tr>
-        <td>Points</td>
-        <td>${estimate}</td>
+      ${ story_type === 'feature' &&
+        `<tr>
+          <td>Points</td>
+          <td>${estimate}</td`
+      }
       </tr>
       <tr>
         <td>Labels</td>
