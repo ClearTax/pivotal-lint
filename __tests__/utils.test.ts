@@ -7,6 +7,7 @@ import {
   LABELS,
   shouldUpdatePRDescription,
   getPrDescription,
+  StoryResponse,
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
@@ -140,17 +141,21 @@ some actual content'
 
 describe('getPrDescription()', () => {
   it('should include the hidden marker when getting PR description', () => {
-    const story = {
-      project_id: 'projectId',
+    const labels = [{ name: 'abc' }];
+    const story: Partial<StoryResponse> = {
+      project_id: 1234,
       id: 'id',
       url: 'url',
-      story_type: 'storyType',
+      story_type: 'feature',
       estimate: 1,
+      labels,
+      name: 'name',
     };
-    const description = getPrDescription('some_body', story);
+    const description = getPrDescription('some_body', story as any);
 
     expect(shouldUpdatePRDescription(description)).toBeFalsy();
     expect(description).toContain(story.id);
     expect(description).toContain(story.estimate);
+    expect(description).toContain(labels[0].name);
   });
 });

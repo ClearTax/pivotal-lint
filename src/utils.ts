@@ -40,16 +40,16 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
-interface StoryLabel {
-  kind: string;
-  id: number;
-  project_id: number;
+export interface StoryLabel {
+  kind?: string;
+  id?: number;
+  project_id?: number;
   name: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
-interface StoryResponse {
+export interface StoryResponse {
   [key: string]: any;
   current_state: string;
   description?: string;
