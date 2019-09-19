@@ -57,12 +57,11 @@ async function run() {
         story,
       } = pivotalDetails;
 
-      console.log('Project name -> ', projectName);
-
       const podLabel: string = getPodLabel(projectName);
       const hotfixLabel: string = getHotfixLabel(baseBranch);
-
       const labels: string[] = filterArray([podLabel, hotfixLabel]);
+
+      console.log('Project name -> ', projectName);
       console.log('Adding lables -> ', labels);
 
       const repo: string = repository ? repository.name : '';
@@ -76,7 +75,7 @@ async function run() {
       };
 
       const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
-      addLabels(client, labelData);
+      await addLabels(client, labelData);
 
       if (shouldUpdatePRDescription(prBody)) {
         const prData: PullsUpdateParams = {
