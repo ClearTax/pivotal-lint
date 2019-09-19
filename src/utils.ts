@@ -173,9 +173,17 @@ export const getStoryIcon = (storyType: string): string => {
   }
 };
 
+/**
+ * Returns true if the body contains the hidden marker. Used to avoid adding
+ * pivotal story details to the PR multiple times.
+ *
+ * @example shouldUpdatePRDescription('--\nadded_by_pr_lint\n') -> true
+ * @example shouldUpdatePRDescription('# some description') -> false
+ */
 export const shouldUpdatePRDescription = (
+  /** The PR description/body as a string. */
   body?: string
-): boolean => !!body && !MARKER_REGEX.test(body);
+): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
 
 
 /**
