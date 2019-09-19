@@ -40,14 +40,28 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
+interface StoryLabel {
+  kind: string;
+  id: number;
+  project_id: number;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 interface StoryResponse {
   [key: string]: any;
-  project_id: string;
-  id: string;
-  url: string;
-  story_type: string;
-  estimate: boolean;
+  current_state: string;
   description?: string;
+  estimate: number;
+  id: string;
+  labels: StoryLabel[];
+  name: string;
+  owner_ids: any[];
+  project_id: number;
+  story_type:  'feature' | 'bug' | 'chore' | 'release';
+  updated_at: Date;
+  url: string;
 }
 
 interface ProjectResponse {
@@ -78,7 +92,7 @@ export const pivotal = (pivotalToken: string) => {
    * Get project details based on project id
    * @param {string} projectId
    */
-  const getProjectDetails = async (projectId: string): Promise<ProjectResponse> => {
+  const getProjectDetails = async (projectId: number): Promise<ProjectResponse> => {
     return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
@@ -185,7 +199,6 @@ export const shouldUpdatePRDescription = (
   body?: string
 ): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
 
-
 /**
  * Get PR description with pivotal details
  * @param  {string=''} body
@@ -219,11 +232,10 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
       <td>Type</td>
       <td>${getStoryIcon(story_type)} ${story_type}</td>
     </tr>
-    ${ story_type === 'feature' &&
+    ${story_type === 'feature' &&
       `<tr>
         <td>Points</td>
-        <td>${estimate}</td`
-    }
+        <td>${estimate}</td`}
     </tr>
     <tr>
       <td>Labels</td>
@@ -247,4 +259,3 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 
 ${body}`;
 };
-

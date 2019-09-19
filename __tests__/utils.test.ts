@@ -6,6 +6,7 @@ import {
   getPodLabel,
   LABELS,
   shouldUpdatePRDescription,
+  getPrDescription,
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
@@ -135,4 +136,21 @@ some actual content'
 - [ ] Tested locally for regressions & all test cases are passing.
 `)).toBeTruthy();
   });
-})
+});
+
+describe('getPrDescription()', () => {
+  it('should include the hidden marker when getting PR description', () => {
+    const story = {
+      project_id: 'projectId',
+      id: 'id',
+      url: 'url',
+      story_type: 'storyType',
+      estimate: 1,
+    };
+    const description = getPrDescription('some_body', story);
+
+    expect(shouldUpdatePRDescription(description)).toBeFalsy();
+    expect(description).toContain(story.id);
+    expect(description).toContain(story.estimate);
+  });
+});
