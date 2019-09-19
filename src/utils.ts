@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
+import { MARKER_REGEX, HIDDEN_MARKER } from './constants';
 
 /**
  *  Extract pivotal id from the branch name
@@ -39,14 +40,28 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
-interface StoryResponse {
+export interface StoryLabel {
+  kind?: string;
+  id?: number;
+  project_id?: number;
+  name: string;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface StoryResponse {
   [key: string]: any;
-  project_id: string;
-  id: string;
-  url: string;
-  story_type: string;
-  estimate: boolean;
+  current_state: string;
   description?: string;
+  estimate: number;
+  id: string;
+  labels: StoryLabel[];
+  name: string;
+  owner_ids: any[];
+  project_id: number;
+  story_type:  'feature' | 'bug' | 'chore' | 'release';
+  updated_at: Date;
+  url: string;
 }
 
 interface ProjectResponse {
@@ -77,7 +92,7 @@ export const pivotal = (pivotalToken: string) => {
    * Get project details based on project id
    * @param {string} projectId
    */
-  const getProjectDetails = async (projectId: string): Promise<ProjectResponse> => {
+  const getProjectDetails = async (projectId: number): Promise<ProjectResponse> => {
     return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
@@ -173,6 +188,18 @@ export const getStoryIcon = (storyType: string): string => {
 };
 
 /**
+ * Returns true if the body contains the hidden marker. Used to avoid adding
+ * pivotal story details to the PR multiple times.
+ *
+ * @example shouldUpdatePRDescription('--\nadded_by_pr_lint\n') -> true
+ * @example shouldUpdatePRDescription('# some description') -> false
+ */
+export const shouldUpdatePRDescription = (
+  /** The PR description/body as a string. */
+  body?: string
+): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
+
+/**
  * Get PR description with pivotal details
  * @param  {string=''} body
  * @param  {StoryResponse} story
@@ -181,46 +208,54 @@ export const getStoryIcon = (storyType: string): string => {
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
   const { url, id, story_type, estimate, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
+
   return `
-  <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
-  <details open>
-    <summary> <strong>Pivotal Summary</strong></summary>
-    <br />
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Details</th>
-      </tr>
-      <tr>
-        <td>Title</td>
-        <td>${name}</td>
-      </tr>
-      <tr>
-        <td>ID</td>
-        <td><a href="${url}" target="_blank">#${id}</a></td>
-      </tr>
-      <tr>
-        <td>Type</td>
-        <td>${getStoryIcon(story_type)} ${story_type}</td>
-      </tr>
-      ${ story_type === 'feature' &&
-        `<tr>
-          <td>Points</td>
-          <td>${estimate}</td`
-      }
-      </tr>
-      <tr>
-        <td>Labels</td>
-        <td>${labelsArr}</td>
-      </tr>
-    </table>
-  </details>
+<h2><a href="${url}" target="_blank">Story #${id}</a></h2>
+
+<details open>
+  <summary> <strong>Pivotal Summary</strong> </summary>
   <br />
-  <details>
-    <summary> <strong>Pivotal Description</strong></summary>
-    <br />
-    <p>${description || 'Oops, the story creator did not add any description.'}</p>
-    <br />
-  </details>
-  \n${body}`;
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Details</th>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td>${name}</td>
+    </tr>
+    <tr>
+      <td>ID</td>
+      <td><a href="${url}" target="_blank">#${id}</a></td>
+    </tr>
+    <tr>
+      <td>Type</td>
+      <td>${getStoryIcon(story_type)} ${story_type}</td>
+    </tr>
+    ${story_type === 'feature' &&
+      `<tr>
+        <td>Points</td>
+        <td>${estimate}</td`}
+    </tr>
+    <tr>
+      <td>Labels</td>
+      <td>${labelsArr}</td>
+    </tr>
+  </table>
+</details>
+<br />
+<details>
+  <summary> <strong>Pivotal Description</strong></summary>
+  <br />
+  <p>${description || 'Oops, the story creator did not add any description.'}</p>
+  <br />
+</details>
+<!--
+  do not remove this marker as it will break pr-lint's functionality.
+  ${HIDDEN_MARKER}
+-->
+
+---
+
+${body}`;
 };

@@ -12,6 +12,7 @@ import {
   updatePrDetails,
   getPivotalId,
   getPrDescription,
+  shouldUpdatePRDescription,
 } from './utils';
 
 async function run() {
@@ -56,12 +57,11 @@ async function run() {
         story,
       } = pivotalDetails;
 
-      console.log('Project name -> ', projectName);
-
       const podLabel: string = getPodLabel(projectName);
       const hotfixLabel: string = getHotfixLabel(baseBranch);
-
       const labels: string[] = filterArray([podLabel, hotfixLabel]);
+
+      console.log('Project name -> ', projectName);
       console.log('Adding lables -> ', labels);
 
       const repo: string = repository ? repository.name : '';
@@ -75,15 +75,17 @@ async function run() {
       };
 
       const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
-      addLabels(client, labelData);
+      await addLabels(client, labelData);
 
-      const prData: PullsUpdateParams = {
-        owner: organization.login,
-        repo,
-        pull_number: prNumber,
-        body: getPrDescription(prBody, story),
-      };
-      updatePrDetails(client, prData);
+      if (shouldUpdatePRDescription(prBody)) {
+        const prData: PullsUpdateParams = {
+          owner: organization.login,
+          repo,
+          pull_number: prNumber,
+          body: getPrDescription(prBody, story),
+        };
+        await updatePrDetails(client, prData);
+      }
     } else {
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
       process.exit(1);
