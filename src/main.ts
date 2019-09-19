@@ -78,7 +78,7 @@ async function run() {
       const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
       addLabels(client, labelData);
 
-      if (prBody && shouldUpdatePRDescription(prBody)) {
+      if (shouldUpdatePRDescription(prBody)) {
         const prData: PullsUpdateParams = {
           owner: organization.login,
           repo,
