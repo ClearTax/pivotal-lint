@@ -64,7 +64,7 @@ describe('getPivotalId()', () => {
 
 describe('getPodLabel()', () => {
   it('should return a single word from a multi word board name', () => {
-    expect(getPodLabel('Jarvis POD')).toEqual('jarvis');
+    expect(getPodLabel('Jarvis POD')).toEqual('Jarvis');
   });
 
   it('should return an empty string', () => {

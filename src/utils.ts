@@ -36,7 +36,7 @@ export const getHotfixLabel = (baseBranch: string): string => {
  * @example Jarvis POD -> jarvis
  */
 export const getPodLabel = (boardName: string): string => {
-  return boardName ? boardName.split(' ')[0].toLowerCase() : '';
+  return boardName ? boardName.split(' ')[0] : '';
 };
 
 interface StoryResponse {
