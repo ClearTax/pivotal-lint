@@ -12,6 +12,7 @@ import {
   updatePrDetails,
   getPivotalId,
   getPrDescription,
+  shouldUpdatePRDescription,
 } from './utils';
 
 async function run() {
@@ -77,13 +78,15 @@ async function run() {
       const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
       addLabels(client, labelData);
 
-      const prData: PullsUpdateParams = {
-        owner: organization.login,
-        repo,
-        pull_number: prNumber,
-        body: getPrDescription(prBody, story),
-      };
-      updatePrDetails(client, prData);
+      if (prBody && shouldUpdatePRDescription(prBody)) {
+        const prData: PullsUpdateParams = {
+          owner: organization.login,
+          repo,
+          pull_number: prNumber,
+          body: getPrDescription(prBody, story),
+        };
+        await updatePrDetails(client, prData);
+      }
     } else {
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
       process.exit(1);

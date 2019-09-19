@@ -173,9 +173,9 @@ export const getStoryIcon = (storyType: string): string => {
   }
 };
 
-export const shouldPrependPivotalStats = (
-  body: string
-): boolean => !MARKER_REGEX.test(body);
+export const shouldUpdatePRDescription = (
+  body?: string
+): boolean => !!body && !MARKER_REGEX.test(body);
 
 
 /**
@@ -185,10 +185,6 @@ export const shouldPrependPivotalStats = (
  * @returns string
  */
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
-  if (!shouldPrependPivotalStats(body)) {
-    return body;
-  }
-
   const { url, id, story_type, estimate, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
 
