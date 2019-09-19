@@ -59,7 +59,7 @@ export interface StoryResponse {
   name: string;
   owner_ids: any[];
   project_id: number;
-  story_type:  'feature' | 'bug' | 'chore' | 'release';
+  story_type: 'feature' | 'bug' | 'chore' | 'release';
   updated_at: Date;
   url: string;
 }
@@ -209,6 +209,12 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
   const { url, id, story_type, estimate, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
 
+  const estimateRow =  story_type === 'feature' ? (`
+      <tr>
+        <td>Points</td>
+        <td>${estimate}</td
+      </tr>
+  `): '';
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
 
@@ -231,12 +237,7 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
     <tr>
       <td>Type</td>
       <td>${getStoryIcon(story_type)} ${story_type}</td>
-    </tr>
-    ${story_type === 'feature' &&
-      `<tr>
-        <td>Points</td>
-        <td>${estimate}</td`}
-    </tr>
+    </tr>${estimateRow}
     <tr>
       <td>Labels</td>
       <td>${labelsArr}</td>
