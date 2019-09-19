@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
+import { MARKER_REGEX, HIDDEN_MARKER } from './constants';
 
 /**
  *  Extract pivotal id from the branch name
@@ -179,48 +180,65 @@ export const getStoryIcon = (storyType: string): string => {
  * @returns string
  */
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
+  if (!shouldPrependPivotalStats(body)) {
+    return body;
+  }
+
   const { url, id, story_type, estimate, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
+
   return `
-  <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
-  <details open>
-    <summary> <strong>Pivotal Summary</strong></summary>
-    <br />
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Details</th>
-      </tr>
-      <tr>
-        <td>Title</td>
-        <td>${name}</td>
-      </tr>
-      <tr>
-        <td>ID</td>
-        <td><a href="${url}" target="_blank">#${id}</a></td>
-      </tr>
-      <tr>
-        <td>Type</td>
-        <td>${getStoryIcon(story_type)} ${story_type}</td>
-      </tr>
-      ${ story_type === 'feature' &&
-        `<tr>
-          <td>Points</td>
-          <td>${estimate}</td`
-      }
-      </tr>
-      <tr>
-        <td>Labels</td>
-        <td>${labelsArr}</td>
-      </tr>
-    </table>
-  </details>
+<h2><a href="${url}" target="_blank">Story #${id}</a></h2>
+
+<details open>
+  <summary> <strong>Pivotal Summary</strong> </summary>
   <br />
-  <details>
-    <summary> <strong>Pivotal Description</strong></summary>
-    <br />
-    <p>${description || 'Oops, the story creator did not add any description.'}</p>
-    <br />
-  </details>
-  \n${body}`;
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Details</th>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td>${name}</td>
+    </tr>
+    <tr>
+      <td>ID</td>
+      <td><a href="${url}" target="_blank">#${id}</a></td>
+    </tr>
+    <tr>
+      <td>Type</td>
+      <td>${getStoryIcon(story_type)} ${story_type}</td>
+    </tr>
+    ${ story_type === 'feature' &&
+      `<tr>
+        <td>Points</td>
+        <td>${estimate}</td`
+    }
+    </tr>
+    <tr>
+      <td>Labels</td>
+      <td>${labelsArr}</td>
+    </tr>
+  </table>
+</details>
+<br />
+<details>
+  <summary> <strong>Pivotal Description</strong></summary>
+  <br />
+  <p>${description || 'Oops, the story creator did not add any description.'}</p>
+  <br />
+</details>
+<!--
+  do not remove this marker as it will break PR-lint's functionality.
+  ${HIDDEN_MARKER}
+-->
+
+---
+
+${body}`;
 };
+
+export const shouldPrependPivotalStats = (
+  body: string
+): boolean => !MARKER_REGEX.test(body);
