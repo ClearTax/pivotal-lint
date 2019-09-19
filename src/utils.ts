@@ -36,7 +36,7 @@ export const getHotfixLabel = (baseBranch: string): string => {
  * @example Jarvis POD -> jarvis
  */
 export const getPodLabel = (boardName: string): string => {
-  return boardName ? boardName.split(' ')[0].toLowerCase() : '';
+  return boardName ? boardName.split(' ')[0] : '';
 };
 
 interface StoryResponse {
@@ -203,9 +203,11 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
         <td>Type</td>
         <td>${getStoryIcon(story_type)} ${story_type}</td>
       </tr>
-      <tr>
-        <td>Points</td>
-        <td>${estimate}</td>
+      ${ story_type === 'feature' &&
+        `<tr>
+          <td>Points</td>
+          <td>${estimate}</td`
+      }
       </tr>
       <tr>
         <td>Labels</td>

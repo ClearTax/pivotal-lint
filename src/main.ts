@@ -38,7 +38,7 @@ async function run() {
     console.log('Head branch -> ', headBranch);
 
     if (isBotPr(headBranch)) {
-      console.log('This is an automated PR so ignoring rest of the checks.');
+      console.log("You look like a bot 🤖 so we're letting you off the hook!");
       process.exit(0);
     }
 
