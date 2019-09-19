@@ -173,6 +173,11 @@ export const getStoryIcon = (storyType: string): string => {
   }
 };
 
+export const shouldPrependPivotalStats = (
+  body: string
+): boolean => !MARKER_REGEX.test(body);
+
+
 /**
  * Get PR description with pivotal details
  * @param  {string=''} body
@@ -239,6 +244,3 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 ${body}`;
 };
 
-export const shouldPrependPivotalStats = (
-  body: string
-): boolean => !MARKER_REGEX.test(body);
