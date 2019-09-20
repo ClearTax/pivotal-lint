@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
-import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS } from './constants';
+import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
 
 /**
  *  Extract pivotal id from the branch name
@@ -170,8 +170,12 @@ export const filterArray = (arr: string[]): string[] => (arr && arr.length ? arr
  */
 export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: string): boolean => {
   if (BOT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
-    console.log("You look like a bot 🤖 so we're letting you off the hook!");
+    console.log(`You look like a bot 🤖 so we're letting you off the hook!`);
     return true;
+  }
+
+  if (DEFAULT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
+    console.log(`Ignoring check for default branch ${branch}`);
   }
 
   const ignorePattern = new RegExp(additionalIgnorePattern || '');

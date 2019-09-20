@@ -4,3 +4,9 @@ export const MARKER_REGEX = new RegExp(HIDDEN_MARKER);
 export const BOT_BRANCH_PATTERNS: RegExp[] = [
   /dependabot/
 ];
+
+export const DEFAULT_BRANCH_PATTERNS:  RegExp[] = [
+  /^master$/,
+  /^production$/,
+  /^gh-pages$/,
+];
