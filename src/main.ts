@@ -8,7 +8,7 @@ import {
   addLabels,
   getPodLabel,
   filterArray,
-  isBotPr,
+  shouldSkipBranchLint,
   updatePrDetails,
   getPivotalId,
   getPrDescription,
@@ -19,6 +19,7 @@ async function run() {
   try {
     const PIVOTAL_TOKEN: string = core.getInput('pivotal-token', { required: true });
     const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
+    const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
 
     const {
       payload: { repository, organization, pull_request },
@@ -38,8 +39,7 @@ async function run() {
     console.log('Base branch -> ', baseBranch);
     console.log('Head branch -> ', headBranch);
 
-    if (isBotPr(headBranch)) {
-      console.log("You look like a bot 🤖 so we're letting you off the hook!");
+    if (shouldSkipBranchLint(headBranch, BRANCH_IGNORE_PATTERN)) {
       process.exit(0);
     }
 

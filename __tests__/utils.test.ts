@@ -1,6 +1,6 @@
 import {
   filterArray,
-  isBotPr,
+  shouldSkipBranchLint,
   getHotfixLabel,
   getPivotalId,
   getPodLabel,
@@ -11,17 +11,27 @@ import {
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
-describe('isBotPr()', () => {
-  it('should return true for dependabot PR', () => {
-    expect(isBotPr('dependabot')).toBeTruthy();
+describe('shouldSkipBranchLint()', () => {
+  it('should recognize bot PRs', () => {
+    expect(shouldSkipBranchLint('dependabot')).toBeTruthy();
   });
 
-  it('should return false for non bot PR', () => {
-    expect(isBotPr('feature/awesomeNewFeature')).toBeFalsy();
+  it('should handle custom ignore patterns', () => {
+    expect(shouldSkipBranchLint('bar', '^bar')).toBeTruthy();
+    expect(shouldSkipBranchLint('foobar', '^bar')).toBeFalsy();
+
+    expect(shouldSkipBranchLint('bar', '[0-9]{2}')).toBeFalsy();
+    expect(shouldSkipBranchLint('bar', '')).toBeFalsy();
+    expect(shouldSkipBranchLint('foo', '[0-9]{2}')).toBeFalsy();
+    expect(shouldSkipBranchLint('f00', '[0-9]{2}')).toBeTruthy();
   });
 
   it('should return false with empty input', () => {
-    expect(isBotPr('')).toBeFalsy();
+    expect(shouldSkipBranchLint('')).toBeFalsy();
+  });
+
+  it('should return false for other branches', () => {
+    expect(shouldSkipBranchLint('feature/awesomeNewFeature')).toBeFalsy();
   });
 });
 

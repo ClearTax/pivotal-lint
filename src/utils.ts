@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
-import { MARKER_REGEX, HIDDEN_MARKER } from './constants';
+import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS } from './constants';
 
 /**
  *  Extract pivotal id from the branch name
@@ -162,13 +162,25 @@ export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdate
 export const filterArray = (arr: string[]): string[] => (arr && arr.length ? arr.filter(x => x.trim()) : []);
 
 /**
- * Check if the PR is an automated one created by a bot
- * Can be extended to include other bots later
+ * Check if the PR is an automated one created by a bot or one matching ignore patterns supplied
+ * via action metadata.
  * @param {string} branch
- * @example isBotPr('dependabot') -> true
- * @example isBotPr('feature/update_123456789') -> false
+ * @example shouldSkipBranchLint('dependabot') -> true
+ * @example shouldSkipBranchLint('feature/update_123456789') -> false
  */
-export const isBotPr = (branch: string): boolean => (branch ? branch.includes('dependabot') : false);
+export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: string): boolean => {
+  if (BOT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
+    console.log("You look like a bot 🤖 so we're letting you off the hook!");
+    return true;
+  }
+
+  const ignorePattern = new RegExp(additionalIgnorePattern || '');
+  if (!!additionalIgnorePattern && ignorePattern.test(branch)) {
+    console.log(`branch '${branch} ignored as it matches the ignore pattern '${additionalIgnorePattern}''`)
+    return true;
+  }
+  return false;
+};
 
 /**
  * Get icon based on the story type
