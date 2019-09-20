@@ -26,8 +26,8 @@ export const LABELS = {
  * @param {string} baseBranch
  */
 export const getHotfixLabel = (baseBranch: string): string => {
-  if (baseBranch.includes('release/v')) return LABELS.HOTFIX_PRE_PROD;
-  if (baseBranch.includes('production')) return LABELS.HOTFIX_PROD;
+  if (baseBranch.startsWith('release/v')) return LABELS.HOTFIX_PRE_PROD;
+  if (baseBranch.startsWith('production')) return LABELS.HOTFIX_PROD;
   return '';
 };
 
