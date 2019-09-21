@@ -8,7 +8,7 @@ inputs:
   pivotal-token:
     description: API Token used to fetch Pivotal Story information.
     required: true
-  branch-ignore-pattern:
+  skip-branches:
     description: A regex to ignore running PR lint on certain branches
     required: false
     default: ''
