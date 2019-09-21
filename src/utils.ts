@@ -216,26 +216,32 @@ export const shouldUpdatePRDescription = (
 ): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
 
 /**
+ * Return a safe value to output for story type.
+ * @param {StoryResponse} story
+ */
+const getEstimateForStoryType = (story: StoryResponse) => {
+  const { story_type: type, estimate } = story;
+  if (type === 'feature') {
+    return typeof estimate !== 'undefined' ? estimate : 'unestimated';
+  }
+  return 'n/a';
+};
+
+/**
  * Get PR description with pivotal details
  * @param  {string=''} body
  * @param  {StoryResponse} story
  * @returns string
  */
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
-  const { url, id, story_type, estimate, labels, description, name } = story;
+  const { url, id, story_type, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
 
-  const estimateRow =  story_type === 'feature' ? (`
-      <tr>
-        <td>Points</td>
-        <td>${estimate}</td
-      </tr>
-  `): '';
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
 
 <details open>
-  <summary> <strong>Pivotal Summary</strong> </summary>
+  <summary><strong>Pivotal Summary</strong></summary>
   <br />
   <table>
     <tr>
@@ -253,7 +259,11 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
     <tr>
       <td>Type</td>
       <td>${getStoryIcon(story_type)} ${story_type}</td>
-    </tr>${estimateRow}
+    </tr>
+    <tr>
+      <td>Points</td>
+      <td>${getEstimateForStoryType(story)}</td
+    </tr>
     <tr>
       <td>Labels</td>
       <td>${labelsArr}</td>
@@ -262,10 +272,9 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 </details>
 <br />
 <details>
-  <summary> <strong>Pivotal Description</strong></summary>
+  <summary><strong>Pivotal Description</strong></summary>
   <br />
   <p>${description || 'Oops, the story creator did not add any description.'}</p>
-  <br />
 </details>
 <!--
   do not remove this marker as it will break pr-lint's functionality.

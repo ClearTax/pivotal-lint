@@ -11,7 +11,7 @@ import {
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
-jest.spyOn(console, 'log').mockImplementation();
+jest.spyOn(console, 'log').mockImplementation(); // avoid actual console.log in test output
 
 describe('shouldSkipBranchLint()', () => {
   it('should recognize bot PRs', () => {
