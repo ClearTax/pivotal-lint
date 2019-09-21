@@ -18,7 +18,7 @@ describe('shouldSkipBranchLint()', () => {
     expect(shouldSkipBranchLint('dependabot')).toBeTruthy();
   });
 
-  it('should handle custom ignore patterns', () => {
+  it.only('should handle custom ignore patterns', () => {
     expect(shouldSkipBranchLint('bar', '^bar')).toBeTruthy();
     expect(shouldSkipBranchLint('foobar', '^bar')).toBeFalsy();
 
@@ -26,6 +26,19 @@ describe('shouldSkipBranchLint()', () => {
     expect(shouldSkipBranchLint('bar', '')).toBeFalsy();
     expect(shouldSkipBranchLint('foo', '[0-9]{2}')).toBeFalsy();
     expect(shouldSkipBranchLint('f00', '[0-9]{2}')).toBeTruthy();
+
+    const customBranchRegex = '^(production-release|master|release\/v\\d+)$';
+    expect(shouldSkipBranchLint('production-release', customBranchRegex)).toBeTruthy();
+    expect(shouldSkipBranchLint('master', customBranchRegex)).toBeTruthy();
+    expect(shouldSkipBranchLint('release/v77', customBranchRegex)).toBeTruthy();
+
+    expect(shouldSkipBranchLint('release/very-important-feature', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('masterful', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('productionish', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('fix/production-issue', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-master', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-release', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-release/v77', customBranchRegex)).toBeFalsy();
   });
 
   it('should return false with empty input', () => {
