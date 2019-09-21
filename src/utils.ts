@@ -176,11 +176,12 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 
   if (DEFAULT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
     console.log(`Ignoring check for default branch ${branch}`);
+    return true;
   }
 
   const ignorePattern = new RegExp(additionalIgnorePattern || '');
   if (!!additionalIgnorePattern && ignorePattern.test(branch)) {
-    console.log(`branch '${branch} ignored as it matches the ignore pattern '${additionalIgnorePattern}''`)
+    console.log(`branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}''`)
     return true;
   }
   return false;
