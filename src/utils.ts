@@ -184,6 +184,8 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
     console.log(`branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`)
     return true;
   }
+
+  console.log(`branch '${branch}' does not match ignore pattern provided in 'skip-branches' option:`, ignorePattern);
   return false;
 };
 
