@@ -262,7 +262,7 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
     </tr>
     <tr>
       <td>Points</td>
-      <td>${getEstimateForStoryType(story)}</td
+      <td>${getEstimateForStoryType(story)}</td>
     </tr>
     <tr>
       <td>Labels</td>
