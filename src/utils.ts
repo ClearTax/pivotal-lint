@@ -227,7 +227,7 @@ const getEstimateForStoryType = (story: StoryResponse) => {
   if (type === 'feature') {
     return typeof estimate !== 'undefined' ? estimate : 'unestimated';
   }
-  return 'n/a';
+  return 'N/A';
 };
 
 /**
