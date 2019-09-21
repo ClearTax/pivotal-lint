@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
-import { MARKER_REGEX, HIDDEN_MARKER } from './constants';
+import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
 
 /**
  *  Extract pivotal id from the branch name
@@ -26,8 +26,8 @@ export const LABELS = {
  * @param {string} baseBranch
  */
 export const getHotfixLabel = (baseBranch: string): string => {
-  if (baseBranch.includes('release/v')) return LABELS.HOTFIX_PRE_PROD;
-  if (baseBranch.includes('production')) return LABELS.HOTFIX_PROD;
+  if (baseBranch.startsWith('release/v')) return LABELS.HOTFIX_PRE_PROD;
+  if (baseBranch.startsWith('production')) return LABELS.HOTFIX_PROD;
   return '';
 };
 
@@ -162,13 +162,32 @@ export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdate
 export const filterArray = (arr: string[]): string[] => (arr && arr.length ? arr.filter(x => x.trim()) : []);
 
 /**
- * Check if the PR is an automated one created by a bot
- * Can be extended to include other bots later
+ * Check if the PR is an automated one created by a bot or one matching ignore patterns supplied
+ * via action metadata.
  * @param {string} branch
- * @example isBotPr('dependabot') -> true
- * @example isBotPr('feature/update_123456789') -> false
+ * @example shouldSkipBranchLint('dependabot') -> true
+ * @example shouldSkipBranchLint('feature/update_123456789') -> false
  */
-export const isBotPr = (branch: string): boolean => (branch ? branch.includes('dependabot') : false);
+export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: string): boolean => {
+  if (BOT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
+    console.log(`You look like a bot 🤖 so we're letting you off the hook!`);
+    return true;
+  }
+
+  if (DEFAULT_BRANCH_PATTERNS.some(pattern => pattern.test(branch))) {
+    console.log(`Ignoring check for default branch ${branch}`);
+    return true;
+  }
+
+  const ignorePattern = new RegExp(additionalIgnorePattern || '');
+  if (!!additionalIgnorePattern && ignorePattern.test(branch)) {
+    console.log(`branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`)
+    return true;
+  }
+
+  console.log(`branch '${branch}' does not match ignore pattern provided in 'skip-branches' option:`, ignorePattern);
+  return false;
+};
 
 /**
  * Get icon based on the story type
@@ -200,26 +219,32 @@ export const shouldUpdatePRDescription = (
 ): boolean => typeof body === 'string' && !MARKER_REGEX.test(body);
 
 /**
+ * Return a safe value to output for story type.
+ * @param {StoryResponse} story
+ */
+const getEstimateForStoryType = (story: StoryResponse) => {
+  const { story_type: type, estimate } = story;
+  if (type === 'feature') {
+    return typeof estimate !== 'undefined' ? estimate : 'unestimated';
+  }
+  return 'N/A';
+};
+
+/**
  * Get PR description with pivotal details
  * @param  {string=''} body
  * @param  {StoryResponse} story
  * @returns string
  */
 export const getPrDescription = (body: string = '', story: StoryResponse): string => {
-  const { url, id, story_type, estimate, labels, description, name } = story;
+  const { url, id, story_type, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
 
-  const estimateRow =  story_type === 'feature' ? (`
-      <tr>
-        <td>Points</td>
-        <td>${estimate}</td
-      </tr>
-  `): '';
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
 
 <details open>
-  <summary> <strong>Pivotal Summary</strong> </summary>
+  <summary><strong>Pivotal Summary</strong></summary>
   <br />
   <table>
     <tr>
@@ -237,7 +262,11 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
     <tr>
       <td>Type</td>
       <td>${getStoryIcon(story_type)} ${story_type}</td>
-    </tr>${estimateRow}
+    </tr>
+    <tr>
+      <td>Points</td>
+      <td>${getEstimateForStoryType(story)}</td>
+    </tr>
     <tr>
       <td>Labels</td>
       <td>${labelsArr}</td>
@@ -246,10 +275,9 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 </details>
 <br />
 <details>
-  <summary> <strong>Pivotal Description</strong></summary>
+  <summary><strong>Pivotal Description</strong></summary>
   <br />
   <p>${description || 'Oops, the story creator did not add any description.'}</p>
-  <br />
 </details>
 <!--
   do not remove this marker as it will break pr-lint's functionality.

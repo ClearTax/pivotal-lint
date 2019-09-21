@@ -1,6 +1,6 @@
 import {
   filterArray,
-  isBotPr,
+  shouldSkipBranchLint,
   getHotfixLabel,
   getPivotalId,
   getPodLabel,
@@ -11,17 +11,42 @@ import {
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
-describe('isBotPr()', () => {
-  it('should return true for dependabot PR', () => {
-    expect(isBotPr('dependabot')).toBeTruthy();
+jest.spyOn(console, 'log').mockImplementation(); // avoid actual console.log in test output
+
+describe('shouldSkipBranchLint()', () => {
+  it('should recognize bot PRs', () => {
+    expect(shouldSkipBranchLint('dependabot')).toBeTruthy();
   });
 
-  it('should return false for non bot PR', () => {
-    expect(isBotPr('feature/awesomeNewFeature')).toBeFalsy();
+  it.only('should handle custom ignore patterns', () => {
+    expect(shouldSkipBranchLint('bar', '^bar')).toBeTruthy();
+    expect(shouldSkipBranchLint('foobar', '^bar')).toBeFalsy();
+
+    expect(shouldSkipBranchLint('bar', '[0-9]{2}')).toBeFalsy();
+    expect(shouldSkipBranchLint('bar', '')).toBeFalsy();
+    expect(shouldSkipBranchLint('foo', '[0-9]{2}')).toBeFalsy();
+    expect(shouldSkipBranchLint('f00', '[0-9]{2}')).toBeTruthy();
+
+    const customBranchRegex = '^(production-release|master|release\/v\\d+)$';
+    expect(shouldSkipBranchLint('production-release', customBranchRegex)).toBeTruthy();
+    expect(shouldSkipBranchLint('master', customBranchRegex)).toBeTruthy();
+    expect(shouldSkipBranchLint('release/v77', customBranchRegex)).toBeTruthy();
+
+    expect(shouldSkipBranchLint('release/very-important-feature', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('masterful', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('productionish', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('fix/production-issue', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-master', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-release', customBranchRegex)).toBeFalsy();
+    expect(shouldSkipBranchLint('chore/rebase-with-release/v77', customBranchRegex)).toBeFalsy();
   });
 
   it('should return false with empty input', () => {
-    expect(isBotPr('')).toBeFalsy();
+    expect(shouldSkipBranchLint('')).toBeFalsy();
+  });
+
+  it('should return false for other branches', () => {
+    expect(shouldSkipBranchLint('feature/awesomeNewFeature')).toBeFalsy();
   });
 });
 
