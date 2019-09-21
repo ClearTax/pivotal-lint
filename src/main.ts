@@ -21,8 +21,6 @@ async function run() {
     const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
     const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
 
-    console.log({ BRANCH_IGNORE_PATTERN });
-
     const {
       payload: { repository, organization, pull_request },
     } = github.context;
