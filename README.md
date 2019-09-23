@@ -42,12 +42,32 @@ name: PR lint
 
 Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
+### Skipping branches
+
+Since GitHub actions take string inputs, you must generate a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/ClearTax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
+
+`pr-lint` already skips PRs which are filed by bots (eg dependabot). You can add more bots to [this list](https://github.com/ClearTax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6).
+
+### Versions
+
+If you want more stability in versions than `@master` you can also use the [semantic releases for pr-lint](https://github.com/ClearTax/pr-lint/releases).
+
+Example:
+
+```yaml
+# ...
+  pr_lint:
+    steps:
+    - name: Verify Pivotal story ID & add relevant labels
+      uses: cleartax/pr-lint@v2.1.0
+      # ...
+```
+
 ## Contributing
 
-All contributions are welcome!
-Follow the instructions [here](https://help.github.com/en/articles/creating-a-javascript-action#commit-and-push-your-action-to-github) to get started.
+Follow the instructions [here](https://help.github.com/en/articles/creating-a-javascript-action#commit-and-push-your-action-to-github) to know more about GitHub actions.
 
-## FAQs
+## FAQ
 
 <details>
   <summary>Why is a Pivotal ID required in branch names?</summary>
