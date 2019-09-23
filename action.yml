@@ -6,9 +6,9 @@ inputs:
     description: Token used to update PR description. Must have write access to your repository.
     required: true
   pivotal-token:
-    description: API Token used to fetch Pivotal Story information.
+    description: API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards.
     required: true
-  branch-ignore-pattern:
+  skip-branches:
     description: A regex to ignore running PR lint on certain branches
     required: false
     default: ''
