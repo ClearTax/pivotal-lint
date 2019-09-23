@@ -1,6 +1,6 @@
 # pr-lint 🧹
 
-> A light-weight lint workflow when using GitHub along with PivotalTracker for project management. Works well when used alongside [pivotal-flow][pivotal-flow].
+> A light-weight lint workflow when using GitHub along with [PivotalTracker][pivotal] for project management. Works well when used alongside [pivotal-flow][pivotal-flow].
 
 [![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/ClearTax/pivotal-flow/blob/master/LICENSE.md)
 
