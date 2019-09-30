@@ -40,14 +40,6 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
-/**
- * Return a story type label from the pivotal board name
- * @param  {StoryResponse} story
- * @return string
- */
-export const getStoryTypeLabel = (story: StoryResponse): string => {
-  return story ? story.story_type : '';
-};
 
 
 export interface StoryLabel {
@@ -197,6 +189,17 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 
   console.log(`branch '${branch}' does not match ignore pattern provided in 'skip-branches' option:`, ignorePattern);
   return false;
+};
+
+
+
+/**
+ * Return a story type label from the pivotal board name
+ * @param  {StoryResponse} story
+ * @return string
+ */
+export const getStoryTypeLabel = (story: StoryResponse): string => {
+  return story ? story.story_type : '';
 };
 
 /**

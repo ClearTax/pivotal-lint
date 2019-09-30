@@ -104,20 +104,6 @@ describe('getPodLabel()', () => {
 
 
 
-describe('getStoryTypeLabel()', () => {
-
-  it('should return a pivotal story type as feature.', () => {
-    const story: Partial<StoryResponse> = {
-      story_type: 'feature',
-    };
-    expect(getStoryTypeLabel(story)).toEqual('feature');
-  });
-
-  it('should return an empty string', () => {
-    expect(getStoryTypeLabel({})).toEqual('');
-  });
-});
-
 describe('shouldUpdatePRDescription()', () => {
   it('should return false when the hidden marker is present', () => {
 
@@ -199,5 +185,21 @@ describe('getPrDescription()', () => {
     expect(description).toContain(story.id);
     expect(description).toContain(story.estimate);
     expect(description).toContain(labels[0].name);
+  });
+});
+
+
+
+
+describe('getStoryTypeLabel()', () => {
+  it('should return a pivotal story type as feature.', () => {
+    const story: Partial<StoryResponse> = {
+      story_type: 'feature',
+    };
+    expect(getStoryTypeLabel(story as any)).toEqual('feature');
+  });
+
+  it('should return an empty string', () => {
+    expect(getStoryTypeLabel({} as any)).toEqual('');
   });
 });
