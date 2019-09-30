@@ -12,6 +12,7 @@
     1. Team name label based on the pivotal board name. if your pivotal board name is `Escher POD` then it will add `escher` as a label. Pivotal board name is fetched from the given story id.
     1. `HOTFIX-PROD` - if the PR is raised against `production-release`
     1. `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
+    1. Pivotal story type (*feature*, *chore*, *bug*). 
 
 ## Usage
 
