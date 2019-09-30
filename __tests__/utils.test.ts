@@ -7,6 +7,7 @@ import {
   LABELS,
   shouldUpdatePRDescription,
   getPrDescription,
+  getStoryTypeLabel,
   StoryResponse,
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';

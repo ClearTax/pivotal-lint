@@ -50,8 +50,6 @@ export const getStoryTypeLabel = (story: StoryResponse): string => {
 };
 
 
-export const getPrDescription = (body: string = '', story: StoryResponse): string => {
-
 export interface StoryLabel {
   kind?: string;
   id?: number;
