@@ -194,7 +194,7 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 
 
 /**
- * Return a story type label from the pivotal board name
+ * Return a story type  from the pivotal story 
  * @param  {StoryResponse} story
  * @return string
  */
