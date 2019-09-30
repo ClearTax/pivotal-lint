@@ -7,6 +7,7 @@ import {
   getHotfixLabel,
   addLabels,
   getPodLabel,
+  getStoryTypeLabel,
   filterArray,
   shouldSkipBranchLint,
   updatePrDetails,
@@ -59,7 +60,8 @@ async function run() {
 
       const podLabel: string = getPodLabel(projectName);
       const hotfixLabel: string = getHotfixLabel(baseBranch);
-      const labels: string[] = filterArray([podLabel, hotfixLabel]);
+      const storyTypeLabel : string = getStoryTypeLabel(story);
+      const labels: string[] = filterArray([podLabel, hotfixLabel, storyTypeLabel]);
 
       console.log('Project name -> ', projectName);
       console.log('Adding lables -> ', labels);
