@@ -40,6 +40,18 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
+/**
+ * Return a story type label from the pivotal board name
+ * @param  {StoryResponse} story
+ * @return string
+ */
+export const getStoryTypeLabel = (story: StoryResponse): string => {
+  return story ? story.story_type : '';
+};
+
+
+export const getPrDescription = (body: string = '', story: StoryResponse): string => {
+
 export interface StoryLabel {
   kind?: string;
   id?: number;
