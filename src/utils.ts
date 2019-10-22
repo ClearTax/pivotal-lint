@@ -182,16 +182,13 @@ export const getCommentBody = (storyTitle: string, prTitle: string): string => {
     return `<p>
     Knock Knock! 🔍
   </p>
-
   <p>
     Just thought I'd let you know that your <em>PR title</em> and <em>story title</em> look <strong>quite different</strong>. PR titles
     that closely resemble the story title make it easier for reviewers to understand the context of the PR.
   </p>
-
   <blockquote>
     An easy-to-understand PR title a day makes the reviewer review away! 😛⚡️
   </blockquote>
-
   <table>
     <tr>
       <th>Story Title</th>
@@ -202,7 +199,6 @@ export const getCommentBody = (storyTitle: string, prTitle: string): string => {
         <td>${prTitle}</td>
       </tr>
   </table>
-
   <p>
     Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
   </p>
@@ -211,11 +207,9 @@ export const getCommentBody = (storyTitle: string, prTitle: string): string => {
     return `<p>
     Let's make that PR title a 💯 shall we? 💪
     </p>
-
     <p>
     Your <em>PR title</em> and <em>story title</em> look <strong>slightly different</strong>. Just checking in to know if it was intentional!
     </p>
-
     <table>
       <tr>
         <th>Story Title</th>
@@ -226,7 +220,6 @@ export const getCommentBody = (storyTitle: string, prTitle: string): string => {
           <td>${prTitle}</td>
         </tr>
     </table>
-
     <p>
       Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
     </p>
