@@ -23,6 +23,7 @@ async function run() {
     const PIVOTAL_TOKEN: string = core.getInput('pivotal-token', { required: true });
     const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
     const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
+    const SKIP_COMMENTS: string = core.getInput('skip-comments', { required: false } || 'false');
 
     const {
       payload: { repository, organization, pull_request },
@@ -94,13 +95,15 @@ async function run() {
         await updatePrDetails(client, prData);
 
         // add comment for PR title
-        const title = pull_request!.title;
-        const comment: IssuesCreateCommentParams = {
-          ...repoDetails,
-          issue_number: prNumber,
-          body: getCommentBody(story.name, title),
-        };
-        await addComment(client, comment);
+        if (SKIP_COMMENTS === 'false') {
+          const title = pull_request!.title;
+          const comment: IssuesCreateCommentParams = {
+            ...repoDetails,
+            issue_number: prNumber,
+            body: getCommentBody(story.name, title),
+          };
+          await addComment(client, comment);
+        }
       }
     } else {
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
