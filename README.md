@@ -7,12 +7,13 @@
 ## Features
 
 1. **Validates branches that are filed as PRs**. It uses the pivotal API to provide GitHub status checks that help you avoid merging PRs without valid story IDs.
-1. **Adds a summary of the story details** to the beginning of the PR's description for better documentation & linking from GitHub → Pivotal. ![pr-lint](https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png)
-1. Automatically labels PRs based on:
+2. **Adds a summary of the story details** to the beginning of the PR's description for better documentation & linking from GitHub → Pivotal. ![pr-lint](https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png)
+3. Automatically labels PRs based on:
     1. Team name label based on the pivotal board name. if your pivotal board name is `Escher POD` then it will add `escher` as a label. Pivotal board name is fetched from the given story id.
-    1. `HOTFIX-PROD` - if the PR is raised against `production-release`
-    1. `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
-    1. Pivotal story type (*feature*, *chore*, *bug*). 
+    2. `HOTFIX-PROD` - if the PR is raised against `production-release`
+    3. `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
+    4. Pivotal story type (*feature*, *chore*, *bug*).
+4. Add a comment to suggest good PR title based on the story title.
 
 ## Usage
 
@@ -31,15 +32,17 @@ name: PR lint
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
         skip-branches: '^(production-release|master|release\/v\d+)$'
+        skip-comments: true
 ```
 
 ### Options
 
-|key|description|required|
-|---|---|---|
-|`github-token`| Token used to update PR description. Must have write access to your repository.|true|
-|`pivotal-token`|API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards.|true|
-|`skip-branches`|A regex to ignore running PR lint on certain branches, like production etc.|false
+| key             | description                                                                                      | required | default |
+| --------------- | ------------------------------------------------------------------------------------------------ | -------- | ------- |
+| `github-token`  | Token used to update PR description. Must have write access to your repository.                  | true     | null    |
+| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards. | true     | null    |
+| `skip-branches` | A regex to ignore running PR lint on certain branches, like production etc.                      | false    | ' '     |
+| `skip-comments` | A `Boolean` if set to `true` PR lint will skip adding lint comments for PR title.                | false    | false   |
 
 Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
