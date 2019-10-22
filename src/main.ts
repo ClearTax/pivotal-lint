@@ -95,6 +95,7 @@ async function run() {
         await updatePrDetails(client, prData);
 
         // add comment for PR title
+        console.log(SKIP_COMMENTS, typeof SKIP_COMMENTS);
         if (SKIP_COMMENTS === 'false') {
           const title = pull_request!.title;
           const comment: IssuesCreateCommentParams = {
@@ -102,6 +103,7 @@ async function run() {
             issue_number: prNumber,
             body: getCommentBody(story.name, title),
           };
+          console.log(comment);
           await addComment(client, comment);
         }
       }
