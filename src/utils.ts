@@ -179,38 +179,62 @@ export const addComment = async (client: github.GitHub, comment: IssuesCreateCom
 export const getCommentBody = (storyTitle: string, prTitle: string): string => {
   const matchRange: number = similarity.compareTwoStrings(storyTitle, prTitle);
   if (matchRange < 0.4) {
-    return `<div>
-        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
-        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
-        <p>Please, add more friendly and </p>
-        <br/>
-        <p><strong>Story Title: </strong>${storyTitle}</p>
-        <p><strong>PR Title: </strong>${prTitle}</p>
-        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
-      </div>
-    `;
-  } else if (matchRange > 0.4 && matchRange < 0.75) {
-    return `<div>
-        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
-        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
-        <p>Please, add more friendly and </p>
-        <br/>
-        <p><strong>Story Title: </strong>${storyTitle}</p>
-        <p><strong>PR Title: </strong>${prTitle}</p>
-        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
-      </div>
+    return `<p>
+    Knock Knock! 🔍
+  </p>
+
+  <p>
+    Just thought I'd let you know that your <em>PR title</em> and <em>story title</em> look <strong>quite different</strong>. PR titles
+    that closely resemble the story title make it easier for reviewers to understand the context of the PR.
+  </p>
+
+  <blockquote>
+    An easy-to-understand PR title a day makes the reviewer review away! 😛⚡️
+  </blockquote>
+
+  <table>
+    <tr>
+      <th>Story Title</th>
+      <td>${storyTitle}</td>
+    </tr>
+    <tr>
+        <th>PR Title</th>
+        <td>${prTitle}</td>
+      </tr>
+  </table>
+
+  <p>
+    Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+  </p>
+  `;
+  } else if (matchRange >= 0.4 && matchRange <= 0.75) {
+    return `<p>
+    Let's make that PR title a 💯 shall we? 💪
+    </p>
+
+    <p>
+    Your <em>PR title</em> and <em>story title</em> look <strong>slightly different</strong>. Just checking in to know if it was intentional!
+    </p>
+
+    <table>
+      <tr>
+        <th>Story Title</th>
+        <td>${storyTitle}</td>
+      </tr>
+      <tr>
+          <th>PR Title</th>
+          <td>${prTitle}</td>
+        </tr>
+    </table>
+
+    <p>
+      Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+    </p>
     `;
   }
-  return `<div>
-        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
-        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
-        <p>Please, add more friendly and </p>
-        <br/>
-        <p><strong>Story Title: </strong>${storyTitle}</p>
-        <p><strong>PR Title: </strong>${prTitle}</p>
-        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
-      </div>
-    `;
+  return `<p>I'm a bot and I 👍 this PR title. 🤖</p>
+
+  <img src="https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif" width="400" />`;
 };
 
 /**
