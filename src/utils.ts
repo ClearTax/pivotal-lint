@@ -390,7 +390,7 @@ export const isHumongousPR = (files: number, additons: number): boolean => files
  * @return {string}
  */
 export const getHugePrComment = (files: number, additons: number) =>
-  `<p>This PR is too big for one to review :broken_heart: </p>
+  `<p>This PR is too huge for one to review :broken_heart: </p>
   <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
       <tr>
