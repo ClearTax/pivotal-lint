@@ -16,6 +16,8 @@ import {
   shouldUpdatePRDescription,
   addComment,
   getCommentBody,
+  getHugePrComment,
+  isHumongousPR,
 } from './utils';
 
 async function run() {
@@ -70,7 +72,9 @@ async function run() {
       console.log('Adding lables -> ', labels);
 
       const repo: string = repository ? repository.name : '';
-      const { number: prNumber, body: prBody } = pull_request ? pull_request : { number: 0, body: '' };
+      const { number: prNumber, body: prBody, changed_files, addtions } = pull_request
+        ? pull_request
+        : { number: 0, body: '' };
 
       const repoDetails = {
         owner: organization.login,
@@ -96,7 +100,7 @@ async function run() {
 
         // add comment for PR title
         if (SKIP_COMMENTS === 'false') {
-          const title = pull_request!.title;
+          const title: string = pull_request!.title;
           const comment: IssuesCreateCommentParams = {
             ...repoDetails,
             issue_number: prNumber,
@@ -104,6 +108,14 @@ async function run() {
           };
           console.log('Adding comment for the PR title');
           await addComment(client, comment);
+
+          // add a comment if the PR is huge
+          const changedFiles: number = pull_request!.changed_files;
+          const additions: number = pull_request!.additions;
+          if (isHumongousPR(changedFiles, additions)) {
+            const hugePrComment = getHugePrComment(changedFiles, additions);
+            await addComment(client, { ...comment, body: hugePrComment });
+          }
         }
       }
     } else {

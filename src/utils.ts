@@ -374,3 +374,38 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 
 ${body}`;
 };
+
+/**
+ * Check if a PR is huge
+ * @param {number} files
+ * @param {number} addtions
+ * @return {boolean}
+ */
+export const isHumongousPR = (files: number, additons: number): boolean => files > 15 || additons > 1000;
+
+/**
+ * Get the comment body for very huge PR
+ * @param {number} files
+ * @param {number} addtions
+ * @return {string}
+ */
+export const getHugePrComment = (files: number, additons: number) =>
+  `<p>This PR is too big for one to review :broken_heart: </p>
+  <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
+    <table>
+      <tr>
+        <th>Files changed</th>
+        <td>${files} :no_good_woman: </td>
+      </tr>
+      <tr>
+          <th>Addtions</th>
+          <td>${additons} :no_good_woman: </td>
+        </tr>
+    </table>
+    <p>
+    Consider breaking it down into multiple small PRs.
+    </p>
+    <p>
+      Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+    </p>
+  `;
