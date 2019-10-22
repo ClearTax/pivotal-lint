@@ -1,7 +1,8 @@
 import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
+import similarity from 'string-similarity';
+import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
 
 /**
@@ -39,8 +40,6 @@ export const getHotfixLabel = (baseBranch: string): string => {
 export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
-
-
 
 export interface StoryLabel {
   kind?: string;
@@ -158,6 +157,63 @@ export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdate
 };
 
 /**
+ *  Add a comment to a PR
+ * @param {github.GitHub} client
+ * @param {IssuesCreateCommentParams} comment
+ */
+export const addComment = async (client: github.GitHub, comment: IssuesCreateCommentParams) => {
+  try {
+    await client.issues.createComment(comment);
+  } catch (error) {
+    core.setFailed(error.message);
+    process.exit(1);
+  }
+};
+
+/**
+ *  Get a comment based on story title and PR title similarity
+ * @param {string} storyTitle
+ * @param {string} prTitle
+ * @returns {string}
+ */
+export const getCommentBody = (storyTitle: string, prTitle: string): string => {
+  const matchRange: number = similarity.compareTwoStrings(storyTitle, prTitle);
+  if (matchRange < 0.4) {
+    return `<div>
+        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
+        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
+        <p>Please, add more friendly and </p>
+        <br/>
+        <p><strong>Story Title: </strong>${storyTitle}</p>
+        <p><strong>PR Title: </strong>${prTitle}</p>
+        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
+      </div>
+    `;
+  } else if (matchRange > 0.4 && matchRange < 0.75) {
+    return `<div>
+        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
+        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
+        <p>Please, add more friendly and </p>
+        <br/>
+        <p><strong>Story Title: </strong>${storyTitle}</p>
+        <p><strong>PR Title: </strong>${prTitle}</p>
+        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
+      </div>
+    `;
+  }
+  return `<div>
+        <p>I was expecting to see a more <strong>meaningful</strong> and <strong>easy to understand</strong> title for the PR :disappointed:</p>
+        <p>Also, I looked at your pivotal story title, there seems to be a disconnect between the story title and the PR title :confused: </p>
+        <p>Please, add more friendly and </p>
+        <br/>
+        <p><strong>Story Title: </strong>${storyTitle}</p>
+        <p><strong>PR Title: </strong>${prTitle}</p>
+        <p>Please add helpful PR title and commit messages. Checkout this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> for more useful tips</p>
+      </div>
+    `;
+};
+
+/**
  * Remove invalid entries from an array
  * @param {Array} arr
  */
@@ -183,7 +239,9 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 
   const ignorePattern = new RegExp(additionalIgnorePattern || '');
   if (!!additionalIgnorePattern && ignorePattern.test(branch)) {
-    console.log(`branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`)
+    console.log(
+      `branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`
+    );
     return true;
   }
 
@@ -191,10 +249,8 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
   return false;
 };
 
-
-
 /**
- * Return a story type  from the pivotal story 
+ * Return a story type  from the pivotal story
  * @param  {StoryResponse} story
  * @return string
  */

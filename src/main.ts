@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
+import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 
 import {
   pivotal,
@@ -14,6 +14,8 @@ import {
   getPivotalId,
   getPrDescription,
   shouldUpdatePRDescription,
+  addComment,
+  getCommentBody,
 } from './utils';
 
 async function run() {
@@ -60,7 +62,7 @@ async function run() {
 
       const podLabel: string = getPodLabel(projectName);
       const hotfixLabel: string = getHotfixLabel(baseBranch);
-      const storyTypeLabel : string = getStoryTypeLabel(story);
+      const storyTypeLabel: string = getStoryTypeLabel(story);
       const labels: string[] = filterArray([podLabel, hotfixLabel, storyTypeLabel]);
 
       console.log('Project name -> ', projectName);
@@ -69,9 +71,13 @@ async function run() {
       const repo: string = repository ? repository.name : '';
       const { number: prNumber, body: prBody } = pull_request ? pull_request : { number: 0, body: '' };
 
-      const labelData: IssuesAddLabelsParams = {
+      const repoDetails = {
         owner: organization.login,
         repo,
+      };
+
+      const labelData: IssuesAddLabelsParams = {
+        ...repoDetails,
         issue_number: prNumber,
         labels,
       };
@@ -81,12 +87,20 @@ async function run() {
 
       if (shouldUpdatePRDescription(prBody)) {
         const prData: PullsUpdateParams = {
-          owner: organization.login,
-          repo,
+          ...repoDetails,
           pull_number: prNumber,
           body: getPrDescription(prBody, story),
         };
         await updatePrDetails(client, prData);
+
+        // add comment for PR title
+        const title = pull_request!.title;
+        const comment: IssuesCreateCommentParams = {
+          ...repoDetails,
+          issue_number: prNumber,
+          body: getCommentBody(story.name, title),
+        };
+        await addComment(client, comment);
       }
     } else {
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
