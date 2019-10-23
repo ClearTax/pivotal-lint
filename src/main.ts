@@ -115,7 +115,7 @@ const addHugePrComment = async (client: github.GitHub, commonPayload: IssueAndCo
       body: getHugePrComment(changedFiles, additions),
     };
     console.log('Adding comment for the PR title');
-    addComment(client, hugePrComment);
+    await addComment(client, hugePrComment);
   }
 };
 
@@ -128,7 +128,7 @@ const addNoIdComment = async (client: github.GitHub, commonPayload: IssueAndComm
     issue_number,
     body: getNoIdComment(headBranch),
   };
-  addComment(client, comment);
+  await addComment(client, comment);
 };
 
 async function run() {
