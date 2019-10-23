@@ -13,7 +13,9 @@
     2. `HOTFIX-PROD` - if the PR is raised against `production-release`
     3. `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
     4. Pivotal story type (*feature*, *chore*, *bug*).
-4. Add a comment to suggest good PR title based on the story title.
+4. Can add comments to a PR to encourage better PR practices in terms of:
+    1. A good PR title (compared to the story title)
+    2. Discourages PRs which are too large (SLOC & files changed)
 
 ## Usage
 
