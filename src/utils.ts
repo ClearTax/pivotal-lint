@@ -241,7 +241,7 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
  * @param  {StoryResponse} story
  * @return string
  */
-export const getStoryTypeLabel = (story: StoryResponse): string => {
+export const getStoryTypeLabel = (story: PivotalStory): string => {
   return story ? story.story_type : '';
 };
 
@@ -278,7 +278,7 @@ export const shouldUpdatePRDescription = (
  * Return a safe value to output for story type.
  * @param {StoryResponse} story
  */
-const getEstimateForStoryType = (story: StoryResponse) => {
+const getEstimateForStoryType = (story: PivotalStory) => {
   const { story_type: type, estimate } = story;
   if (type === 'feature') {
     return typeof estimate !== 'undefined' ? estimate : 'unestimated';
@@ -292,7 +292,7 @@ const getEstimateForStoryType = (story: StoryResponse) => {
  * @param  {StoryResponse} story
  * @returns string
  */
-export const getPrDescription = (body: string = '', story: StoryResponse): string => {
+export const getPrDescription = (body: string = '', story: PivotalStory): string => {
   const { url, id, story_type, labels, description, name } = story;
   const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
 
