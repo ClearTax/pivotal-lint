@@ -1,3 +1,4 @@
+import { PivotalStory, StoryType } from './../src/types';
 import {
   filterArray,
   shouldSkipBranchLint,
@@ -8,7 +9,6 @@ import {
   shouldUpdatePRDescription,
   getPrDescription,
   getStoryTypeLabel,
-  StoryResponse,
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
@@ -28,7 +28,7 @@ describe('shouldSkipBranchLint()', () => {
     expect(shouldSkipBranchLint('foo', '[0-9]{2}')).toBeFalsy();
     expect(shouldSkipBranchLint('f00', '[0-9]{2}')).toBeTruthy();
 
-    const customBranchRegex = '^(production-release|master|release\/v\\d+)$';
+    const customBranchRegex = '^(production-release|master|release/v\\d+)$';
     expect(shouldSkipBranchLint('production-release', customBranchRegex)).toBeTruthy();
     expect(shouldSkipBranchLint('master', customBranchRegex)).toBeTruthy();
     expect(shouldSkipBranchLint('release/v77', customBranchRegex)).toBeTruthy();
@@ -102,13 +102,11 @@ describe('getPodLabel()', () => {
   });
 });
 
-
-
 describe('shouldUpdatePRDescription()', () => {
   it('should return false when the hidden marker is present', () => {
-
     expect(shouldUpdatePRDescription(HIDDEN_MARKER)).toBeFalsy();
-    expect(shouldUpdatePRDescription(`
+    expect(
+      shouldUpdatePRDescription(`
 <h2><a href="https://www.pivotaltracker.com/story/show/999999999" target="_blank">Story #999999999</a></h2>
 <details open>
   <summary> <strong>Pivotal Summary</strong></summary>
@@ -149,32 +147,35 @@ describe('shouldUpdatePRDescription()', () => {
 -->
 
 some actual content'
-    `)).toBeFalsy();
+    `)
+    ).toBeFalsy();
   });
 
-  it('should return true when the hidden marker is NOT present', () =>{
+  it('should return true when the hidden marker is NOT present', () => {
     expect(shouldUpdatePRDescription('')).toBeTruthy();
     expect(shouldUpdatePRDescription('added_by')).toBeTruthy();
     expect(shouldUpdatePRDescription('added_by_something_else')).toBeTruthy();
-    expect(shouldUpdatePRDescription(`
+    expect(
+      shouldUpdatePRDescription(`
 ## Checklist
 
 - [ ] PR is up-to-date with a description of changes and screenshots (if applicable).
 - [ ] All files are lint-free.
 - [ ] Added tests for the core-changes (as applicable).
 - [ ] Tested locally for regressions & all test cases are passing.
-`)).toBeTruthy();
+`)
+    ).toBeTruthy();
   });
 });
 
 describe('getPrDescription()', () => {
   it('should include the hidden marker when getting PR description', () => {
     const labels = [{ name: 'abc' }];
-    const story: Partial<StoryResponse> = {
+    const story: Partial<PivotalStory> = {
       project_id: 1234,
       id: 'id',
       url: 'url',
-      story_type: 'feature',
+      story_type: StoryType.Feature,
       estimate: 1,
       labels,
       name: 'name',
@@ -188,13 +189,10 @@ describe('getPrDescription()', () => {
   });
 });
 
-
-
-
 describe('getStoryTypeLabel()', () => {
   it('should return a pivotal story type as feature.', () => {
-    const story: Partial<StoryResponse> = {
-      story_type: 'feature',
+    const story: Partial<PivotalStory> = {
+      story_type: StoryType.Feature,
     };
     expect(getStoryTypeLabel(story as any)).toEqual('feature');
   });
