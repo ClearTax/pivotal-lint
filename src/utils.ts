@@ -4,6 +4,7 @@ import * as github from '@actions/github';
 import similarity from 'string-similarity';
 import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
+import { PivotalStory, PivotalProjectResponse, PivotalDetails } from './types';
 
 /**
  *  Extract pivotal id from the branch name
@@ -50,31 +51,6 @@ export interface StoryLabel {
   updated_at?: Date;
 }
 
-export interface StoryResponse {
-  [key: string]: any;
-  current_state: string;
-  description?: string;
-  estimate: number;
-  id: string;
-  labels: StoryLabel[];
-  name: string;
-  owner_ids: any[];
-  project_id: number;
-  story_type: 'feature' | 'bug' | 'chore' | 'release';
-  updated_at: Date;
-  url: string;
-}
-
-interface ProjectResponse {
-  [key: string]: any;
-  name: string;
-}
-
-export interface PivotalDetails {
-  story: StoryResponse;
-  project: ProjectResponse;
-}
-
 export const pivotal = (pivotalToken: string) => {
   const request = axios.create({
     baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -85,7 +61,7 @@ export const pivotal = (pivotalToken: string) => {
   /**
    * Get story details based on story id
    */
-  const getStoryDetails = async (storyId: string): Promise<StoryResponse> => {
+  const getStoryDetails = async (storyId: string): Promise<PivotalStory> => {
     return request.get(`/stories/${storyId}`).then(res => res.data);
   };
 
@@ -93,32 +69,26 @@ export const pivotal = (pivotalToken: string) => {
    * Get project details based on project id
    * @param {string} projectId
    */
-  const getProjectDetails = async (projectId: number): Promise<ProjectResponse> => {
+  const getProjectDetails = async (projectId: number): Promise<PivotalProjectResponse> => {
     return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
   /**
    * Get both story and project details
    */
-  const getPivotalDetails = async (pivotalId: string): Promise<PivotalDetails | undefined> => {
-    try {
-      console.log('Checking pivotal id for -> ', pivotalId);
-      const story: StoryResponse = await getStoryDetails(pivotalId);
-      const { project_id, id, url } = story;
-      if (id && project_id && url) {
-        console.log('Story url ->', url);
-        const project: ProjectResponse = await getProjectDetails(project_id);
-        const response: PivotalDetails = {
-          story,
-          project,
-        };
-        return response;
-      }
-      return;
-    } catch (error) {
-      console.log(error.message);
-      return;
-    }
+  const getPivotalDetails = async (pivotalId: string): Promise<PivotalDetails> => {
+    console.log('Checking pivotal id for -> ', pivotalId);
+    const story: PivotalStory = await getStoryDetails(pivotalId);
+
+    const { project_id, url } = story;
+    console.log('Story url ->', url);
+
+    const project: PivotalProjectResponse = await getProjectDetails(project_id);
+    const response: PivotalDetails = {
+      story,
+      project,
+    };
+    return response;
   };
 
   return {
@@ -409,3 +379,23 @@ export const getHugePrComment = (files: number, additons: number): string =>
       Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
     </p>
   `;
+
+/**
+ * Get the comment body for pr with no pivotal id in the branch name
+ * @param {string} branch
+ * @return {string}
+ */
+export const getNoIdComment = (branch: string) => {
+  return `<p> A Pivotal Story ID is missing from your branch name! 🦄</p>
+<p>Your branch: ${branch}</p>
+<p>If this is your first time contributing to this repository - welcome!</p>
+<hr />
+<p>Please refer to <a href="https://github.com/ClearTax/pivotal-flow">pivotal-flow</a> to get started.
+<p>Without the Pivotal Story ID in your branch name you would lose out on automatic updates to Pivotal stories via SCM and the commandline; some GitHub status checks might fail.</p>
+Valid sample branch names:
+
+  ‣ feature/shiny-new-feature_12345678'
+  ‣ 'chore/changelogUpdate_12345678'
+  ‣ 'bugfix/fix-some-strange-bug_12345678'
+`;
+};
