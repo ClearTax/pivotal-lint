@@ -138,7 +138,7 @@ async function run() {
             body: getPrTitleComment(story.name, title),
           };
           console.log('Adding comment for the PR title');
-          await addComment(client, prTitleComment);
+          addComment(client, prTitleComment);
 
           // add a comment if the PR is huge
           if (isHumongousPR(changedFiles, additions)) {
@@ -147,7 +147,7 @@ async function run() {
               body: getHugePrComment(changedFiles, additions),
             };
             console.log('Adding comment for huge PR');
-            await addComment(client, hugePrComment);
+            addComment(client, hugePrComment);
           }
         }
       }
