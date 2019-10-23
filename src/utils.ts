@@ -4,7 +4,7 @@ import * as github from '@actions/github';
 import similarity from 'string-similarity';
 import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
-import { PivotalStory, PivotalProjectResponse, PivotalDetails } from './types';
+import { PivotalStory, PivotalProjectResponse, PivotalDetails, Label } from './types';
 
 /**
  *  Extract pivotal id from the branch name
@@ -294,7 +294,7 @@ const getEstimateForStoryType = (story: PivotalStory) => {
  */
 export const getPrDescription = (body: string = '', story: PivotalStory): string => {
   const { url, id, story_type, labels, description, name } = story;
-  const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
+  const labelsArr = (labels as Label[]).map((label: { name: string }) => label.name).join(', ');
 
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
