@@ -136,7 +136,6 @@ export const addComment = async (client: github.GitHub, comment: IssuesCreateCom
     await client.issues.createComment(comment);
   } catch (error) {
     core.setFailed(error.message);
-    process.exit(1);
   }
 };
 

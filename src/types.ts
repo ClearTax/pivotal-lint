@@ -59,7 +59,7 @@ export interface PivotalStory {
   labels: Label[] | string[];
   owner_ids: number[];
   current_state?: StoryState;
-  id: string;
+  id: number;
   project_id: number;
   updated_at: Date;
   url: string;
