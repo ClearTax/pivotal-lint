@@ -63,7 +63,6 @@ async function run() {
       owner,
       repo,
       issue_number: prNumber,
-      body: '',
     };
 
     // github client with given token
