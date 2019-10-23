@@ -15,7 +15,7 @@ import {
   getPrDescription,
   shouldUpdatePRDescription,
   addComment,
-  getCommentBody,
+  getPrTitleComment,
   getHugePrComment,
   isHumongousPR,
   getNoIdComment,
@@ -59,7 +59,7 @@ async function run() {
     } = pull_request as PullRequestParams;
 
     // basic comment object with empty body
-    const comment: IssuesCreateCommentParams = {
+    const commonPayload = {
       owner,
       repo,
       issue_number: prNumber,
@@ -71,7 +71,11 @@ async function run() {
 
     if (!headBranch && !baseBranch) {
       const commentBody = 'pr-lint is unable to determine the head and base branch';
-      await addComment(client, { ...comment, body: commentBody });
+      const comment: IssuesCreateCommentParams = {
+        ...commonPayload,
+        body: commentBody,
+      };
+      await addComment(client, comment);
 
       core.setFailed('Unable to get the head and base branch');
       process.exit(1);
@@ -86,8 +90,11 @@ async function run() {
 
     const pivotalId = getPivotalId(headBranch);
     if (!pivotalId) {
-      const commentBody = getNoIdComment(headBranch);
-      await addComment(client, { ...comment, body: commentBody });
+      const comment: IssuesCreateCommentParams = {
+        ...commonPayload,
+        body: getNoIdComment(headBranch),
+      };
+      await addComment(client, comment);
 
       core.setFailed('Pivotal id is missing in your branch.');
       process.exit(1);
@@ -110,9 +117,7 @@ async function run() {
       console.log('Adding lables -> ', labels);
 
       const labelData: IssuesAddLabelsParams = {
-        owner,
-        repo,
-        issue_number: prNumber,
+        ...commonPayload,
         labels,
       };
 
@@ -129,20 +134,21 @@ async function run() {
 
         // add comment for PR title
         if (SKIP_COMMENTS === 'false') {
-          const comment: IssuesCreateCommentParams = {
-            owner,
-            repo,
-            issue_number: prNumber,
-            body: getCommentBody(story.name, title),
+          const prTitleComment: IssuesCreateCommentParams = {
+            ...commonPayload,
+            body: getPrTitleComment(story.name, title),
           };
           console.log('Adding comment for the PR title');
-          await addComment(client, comment);
+          await addComment(client, prTitleComment);
 
           // add a comment if the PR is huge
           if (isHumongousPR(changedFiles, additions)) {
-            const hugePrComment = getHugePrComment(changedFiles, additions);
+            const hugePrComment: IssuesCreateCommentParams = {
+              ...commonPayload,
+              body: getHugePrComment(changedFiles, additions),
+            };
             console.log('Adding comment for huge PR');
-            await addComment(client, { ...comment, body: hugePrComment });
+            await addComment(client, hugePrComment);
           }
         }
       }

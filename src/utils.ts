@@ -146,7 +146,7 @@ export const addComment = async (client: github.GitHub, comment: IssuesCreateCom
  * @param {string} prTitle
  * @returns {string}
  */
-export const getCommentBody = (storyTitle: string, prTitle: string): string => {
+export const getPrTitleComment = (storyTitle: string, prTitle: string): string => {
   const matchRange: number = similarity.compareTwoStrings(storyTitle, prTitle);
   if (matchRange < 0.4) {
     return `<p>
