@@ -58,7 +58,7 @@ async function run() {
       title = '',
     } = pull_request as PullRequestParams;
 
-    // basic comment object with empty body
+    // common fields for both issue and comment
     const commonPayload = {
       owner,
       repo,
@@ -153,6 +153,12 @@ async function run() {
         }
       }
     } else {
+      const comment: IssuesCreateCommentParams = {
+        ...commonPayload,
+        body: getNoIdComment(headBranch),
+      };
+      await addComment(client, comment);
+
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
       process.exit(1);
     }
