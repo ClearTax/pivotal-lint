@@ -138,7 +138,7 @@ export const addComment = async (client: github.GitHub, comment: IssuesCreateCom
  */
 export const getPrTitleComment = (storyTitle: string, prTitle: string): string => {
   const matchRange: number = similarity.compareTwoStrings(storyTitle, prTitle);
-  if (matchRange < 0.4) {
+  if (matchRange < 0.2) {
     return `<p>
     Knock Knock! 🔍
   </p>
@@ -163,7 +163,7 @@ export const getPrTitleComment = (storyTitle: string, prTitle: string): string =
     Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
   </p>
   `;
-  } else if (matchRange >= 0.4 && matchRange <= 0.75) {
+  } else if (matchRange >= 0.2 && matchRange <= 0.4) {
     return `<p>
     Let's make that PR title a 💯 shall we? 💪
     </p>
@@ -337,11 +337,10 @@ ${body}`;
 
 /**
  * Check if a PR is huge
- * @param {number} files
  * @param {number} addtions
  * @return {boolean}
  */
-export const isHumongousPR = (files: number, additons: number): boolean => files > 15 || additons > 1000;
+export const isHumongousPR = (additons: number): boolean => additons > 1000;
 
 /**
  * Get the comment body for very huge PR
@@ -349,17 +348,17 @@ export const isHumongousPR = (files: number, additons: number): boolean => files
  * @param {number} addtions
  * @return {string}
  */
-export const getHugePrComment = (files: number, additons: number): string =>
+export const getHugePrComment = (additons: number): string =>
   `<p>This PR is too huge for one to review :broken_heart: </p>
   <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
       <tr>
-        <th>Files changed</th>
-        <td>${files} :no_good_woman: </td>
-      </tr>
-      <tr>
           <th>Addtions</th>
           <td>${additons} :no_good_woman: </td>
+      </tr>
+      <tr>
+          <th>Expected</th>
+          <td>:arrow_down: 1000</td>
         </tr>
     </table>
     <p>
@@ -394,4 +393,4 @@ Valid sample branch names:
  * Return true if skip-comments is set to false
  * @param {string} skipConfig
  */
-export const shouldAddComments = (skipConfig: string) => skipConfig !== 'true'
+export const shouldAddComments = (skipConfig: string) => skipConfig !== 'true';

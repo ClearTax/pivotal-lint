@@ -19,7 +19,7 @@ import {
   getHugePrComment,
   isHumongousPR,
   getNoIdComment,
-  shouldAddComments
+  shouldAddComments,
 } from './utils';
 import { PullRequestParams, PivotalDetails } from './types';
 
@@ -54,7 +54,6 @@ async function run() {
       head: { ref: headBranch },
       number: prNumber = 0,
       body: prBody = '',
-      changed_files: changedFiles = 0,
       additions = 0,
       title = '',
     } = pull_request as PullRequestParams;
@@ -142,10 +141,10 @@ async function run() {
           addComment(client, prTitleComment);
 
           // add a comment if the PR is huge
-          if (isHumongousPR(changedFiles, additions)) {
+          if (isHumongousPR(additions)) {
             const hugePrComment: IssuesCreateCommentParams = {
               ...commonPayload,
-              body: getHugePrComment(changedFiles, additions),
+              body: getHugePrComment(additions),
             };
             console.log('Adding comment for huge PR');
             addComment(client, hugePrComment);
