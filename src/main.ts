@@ -27,6 +27,7 @@ const getInputs = () => {
   const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
   const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
   const SKIP_COMMENTS: string = core.getInput('skip-comments', { required: false }) || 'false';
+  console.log(SKIP_COMMENTS, typeof SKIP_COMMENTS);
   return {
     PIVOTAL_TOKEN,
     GITHUB_TOKEN,

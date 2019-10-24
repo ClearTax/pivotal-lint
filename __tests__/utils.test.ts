@@ -173,7 +173,7 @@ describe('getPrDescription()', () => {
     const labels = [{ name: 'abc' }];
     const story: Partial<PivotalStory> = {
       project_id: 1234,
-      id: 'id',
+      id: 123,
       url: 'url',
       story_type: StoryType.Feature,
       estimate: 1,
