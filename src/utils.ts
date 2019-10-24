@@ -1,8 +1,10 @@
 import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesAddLabelsParams, PullsUpdateParams } from '@octokit/rest';
+import similarity from 'string-similarity';
+import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
+import { PivotalStory, PivotalProjectResponse, PivotalDetails, Label } from './types';
 
 /**
  *  Extract pivotal id from the branch name
@@ -40,42 +42,6 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
-
-
-export interface StoryLabel {
-  kind?: string;
-  id?: number;
-  project_id?: number;
-  name: string;
-  created_at?: Date;
-  updated_at?: Date;
-}
-
-export interface StoryResponse {
-  [key: string]: any;
-  current_state: string;
-  description?: string;
-  estimate: number;
-  id: string;
-  labels: StoryLabel[];
-  name: string;
-  owner_ids: any[];
-  project_id: number;
-  story_type: 'feature' | 'bug' | 'chore' | 'release';
-  updated_at: Date;
-  url: string;
-}
-
-interface ProjectResponse {
-  [key: string]: any;
-  name: string;
-}
-
-export interface PivotalDetails {
-  story: StoryResponse;
-  project: ProjectResponse;
-}
-
 export const pivotal = (pivotalToken: string) => {
   const request = axios.create({
     baseURL: `https://www.pivotaltracker.com/services/v5`,
@@ -86,7 +52,7 @@ export const pivotal = (pivotalToken: string) => {
   /**
    * Get story details based on story id
    */
-  const getStoryDetails = async (storyId: string): Promise<StoryResponse> => {
+  const getStoryDetails = async (storyId: string): Promise<PivotalStory> => {
     return request.get(`/stories/${storyId}`).then(res => res.data);
   };
 
@@ -94,32 +60,26 @@ export const pivotal = (pivotalToken: string) => {
    * Get project details based on project id
    * @param {string} projectId
    */
-  const getProjectDetails = async (projectId: number): Promise<ProjectResponse> => {
+  const getProjectDetails = async (projectId: number): Promise<PivotalProjectResponse> => {
     return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
   /**
    * Get both story and project details
    */
-  const getPivotalDetails = async (pivotalId: string): Promise<PivotalDetails | undefined> => {
-    try {
-      console.log('Checking pivotal id for -> ', pivotalId);
-      const story: StoryResponse = await getStoryDetails(pivotalId);
-      const { project_id, id, url } = story;
-      if (id && project_id && url) {
-        console.log('Story url ->', url);
-        const project: ProjectResponse = await getProjectDetails(project_id);
-        const response: PivotalDetails = {
-          story,
-          project,
-        };
-        return response;
-      }
-      return;
-    } catch (error) {
-      console.log(error.message);
-      return;
-    }
+  const getPivotalDetails = async (pivotalId: string): Promise<PivotalDetails> => {
+    console.log('Checking pivotal id for -> ', pivotalId);
+    const story: PivotalStory = await getStoryDetails(pivotalId);
+
+    const { project_id, url } = story;
+    console.log('Story url ->', url);
+
+    const project: PivotalProjectResponse = await getProjectDetails(project_id);
+    const response: PivotalDetails = {
+      story,
+      project,
+    };
+    return response;
   };
 
   return {
@@ -158,6 +118,79 @@ export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdate
 };
 
 /**
+ *  Add a comment to a PR
+ * @param {github.GitHub} client
+ * @param {IssuesCreateCommentParams} comment
+ */
+export const addComment = async (client: github.GitHub, comment: IssuesCreateCommentParams) => {
+  try {
+    await client.issues.createComment(comment);
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+};
+
+/**
+ *  Get a comment based on story title and PR title similarity
+ * @param {string} storyTitle
+ * @param {string} prTitle
+ * @returns {string}
+ */
+export const getPrTitleComment = (storyTitle: string, prTitle: string): string => {
+  const matchRange: number = similarity.compareTwoStrings(storyTitle, prTitle);
+  if (matchRange < 0.4) {
+    return `<p>
+    Knock Knock! 🔍
+  </p>
+  <p>
+    Just thought I'd let you know that your <em>PR title</em> and <em>story title</em> look <strong>quite different</strong>. PR titles
+    that closely resemble the story title make it easier for reviewers to understand the context of the PR.
+  </p>
+  <blockquote>
+    An easy-to-understand PR title a day makes the reviewer review away! 😛⚡️
+  </blockquote>
+  <table>
+    <tr>
+      <th>Story Title</th>
+      <td>${storyTitle}</td>
+    </tr>
+    <tr>
+        <th>PR Title</th>
+        <td>${prTitle}</td>
+      </tr>
+  </table>
+  <p>
+    Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+  </p>
+  `;
+  } else if (matchRange >= 0.4 && matchRange <= 0.75) {
+    return `<p>
+    Let's make that PR title a 💯 shall we? 💪
+    </p>
+    <p>
+    Your <em>PR title</em> and <em>story title</em> look <strong>slightly different</strong>. Just checking in to know if it was intentional!
+    </p>
+    <table>
+      <tr>
+        <th>Story Title</th>
+        <td>${storyTitle}</td>
+      </tr>
+      <tr>
+          <th>PR Title</th>
+          <td>${prTitle}</td>
+        </tr>
+    </table>
+    <p>
+      Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+    </p>
+    `;
+  }
+  return `<p>I'm a bot and I 👍 this PR title. 🤖</p>
+
+  <img src="https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif" width="400" />`;
+};
+
+/**
  * Remove invalid entries from an array
  * @param {Array} arr
  */
@@ -183,7 +216,9 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
 
   const ignorePattern = new RegExp(additionalIgnorePattern || '');
   if (!!additionalIgnorePattern && ignorePattern.test(branch)) {
-    console.log(`branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`)
+    console.log(
+      `branch '${branch}' ignored as it matches the ignore pattern '${additionalIgnorePattern}' provided in skip-branches`
+    );
     return true;
   }
 
@@ -191,14 +226,12 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
   return false;
 };
 
-
-
 /**
- * Return a story type  from the pivotal story 
+ * Return a story type  from the pivotal story
  * @param  {StoryResponse} story
  * @return string
  */
-export const getStoryTypeLabel = (story: StoryResponse): string => {
+export const getStoryTypeLabel = (story: PivotalStory): string => {
   return story ? story.story_type : '';
 };
 
@@ -235,7 +268,7 @@ export const shouldUpdatePRDescription = (
  * Return a safe value to output for story type.
  * @param {StoryResponse} story
  */
-const getEstimateForStoryType = (story: StoryResponse) => {
+const getEstimateForStoryType = (story: PivotalStory) => {
   const { story_type: type, estimate } = story;
   if (type === 'feature') {
     return typeof estimate !== 'undefined' ? estimate : 'unestimated';
@@ -249,9 +282,9 @@ const getEstimateForStoryType = (story: StoryResponse) => {
  * @param  {StoryResponse} story
  * @returns string
  */
-export const getPrDescription = (body: string = '', story: StoryResponse): string => {
+export const getPrDescription = (body: string = '', story: PivotalStory): string => {
   const { url, id, story_type, labels, description, name } = story;
-  const labelsArr = labels.map((label: { name: string }) => label.name).join(', ');
+  const labelsArr = (labels as Label[]).map((label: { name: string }) => label.name).join(', ');
 
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
@@ -301,3 +334,64 @@ export const getPrDescription = (body: string = '', story: StoryResponse): strin
 
 ${body}`;
 };
+
+/**
+ * Check if a PR is huge
+ * @param {number} files
+ * @param {number} addtions
+ * @return {boolean}
+ */
+export const isHumongousPR = (files: number, additons: number): boolean => files > 15 || additons > 1000;
+
+/**
+ * Get the comment body for very huge PR
+ * @param {number} files
+ * @param {number} addtions
+ * @return {string}
+ */
+export const getHugePrComment = (files: number, additons: number): string =>
+  `<p>This PR is too huge for one to review :broken_heart: </p>
+  <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
+    <table>
+      <tr>
+        <th>Files changed</th>
+        <td>${files} :no_good_woman: </td>
+      </tr>
+      <tr>
+          <th>Addtions</th>
+          <td>${additons} :no_good_woman: </td>
+        </tr>
+    </table>
+    <p>
+    Consider breaking it down into multiple small PRs.
+    </p>
+    <p>
+      Check out this <a href="https://www.atlassian.com/blog/git/written-unwritten-guide-pull-requests">guide</a> to learn more about PR best-practices.
+    </p>
+  `;
+
+/**
+ * Get the comment body for pr with no pivotal id in the branch name
+ * @param {string} branch
+ * @return {string}
+ */
+export const getNoIdComment = (branch: string) => {
+  return `<p> A Pivotal Story ID is missing from your branch name! 🦄</p>
+<p>Your branch: ${branch}</p>
+<p>If this is your first time contributing to this repository - welcome!</p>
+<hr />
+<p>Please refer to <a href="https://github.com/ClearTax/pivotal-flow">pivotal-flow</a> to get started.
+<p>Without the Pivotal Story ID in your branch name you would lose out on automatic updates to Pivotal stories via SCM and the commandline; some GitHub status checks might fail.</p>
+Valid sample branch names:
+
+  ‣ feature/shiny-new-feature_12345678'
+  ‣ 'chore/changelogUpdate_12345678'
+  ‣ 'bugfix/fix-some-strange-bug_12345678'
+`;
+};
+
+/**
+ * Return true if skip-comments is set to false
+ * @param {string} skipConfig
+ */
+export const shouldAddComments = (skipConfig: string) => skipConfig !== 'true'
