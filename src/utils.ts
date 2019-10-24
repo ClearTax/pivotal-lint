@@ -398,3 +398,9 @@ Valid sample branch names:
   ‣ 'bugfix/fix-some-strange-bug_12345678'
 `;
 };
+
+/**
+ * Return true if skip-comments is set to false
+ * @param {string} skipConfig
+ */
+export const shouldAddComments = (skipConfig: string) => skipConfig !== 'true'
