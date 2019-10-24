@@ -42,15 +42,6 @@ export const getPodLabel = (boardName: string): string => {
   return boardName ? boardName.split(' ')[0] : '';
 };
 
-export interface StoryLabel {
-  kind?: string;
-  id?: number;
-  project_id?: number;
-  name: string;
-  created_at?: Date;
-  updated_at?: Date;
-}
-
 export const pivotal = (pivotalToken: string) => {
   const request = axios.create({
     baseURL: `https://www.pivotaltracker.com/services/v5`,
