@@ -232,14 +232,14 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
  * @return string
  */
 export const getStoryTypeLabel = (story: PivotalStory): string => {
-  return story ? story.story_type : '';
+  return story && story.story_type ? story.story_type : '';
 };
 
 /**
  * Get icon based on the story type
  * @param  {string} storyType
  */
-export const getStoryIcon = (storyType: string): string => {
+const getStoryIcon = (storyType: string): string => {
   switch (storyType) {
     case 'feature':
       return `⭐️ `;
@@ -340,7 +340,7 @@ ${body}`;
  * @param {number} addtions
  * @return {boolean}
  */
-export const isHumongousPR = (additons: number): boolean => additons > 1000;
+export const isHumongousPR = (additons: number, threshold: number): boolean => additons > threshold;
 
 /**
  * Get the comment body for very huge PR

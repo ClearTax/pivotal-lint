@@ -28,17 +28,24 @@ const getInputs = () => {
   const GITHUB_TOKEN: string = core.getInput('github-token', { required: true });
   const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
   const SKIP_COMMENTS: string = core.getInput('skip-comments', { required: false }) || 'false';
+  const PR_THRESHOLD: string = core.getInput('pr-threshold', { required: false }) || '';
+
   return {
     PIVOTAL_TOKEN,
     GITHUB_TOKEN,
     BRANCH_IGNORE_PATTERN,
     SKIP_COMMENTS,
+    PR_THRESHOLD,
   };
 };
 
 async function run() {
   try {
-    const { PIVOTAL_TOKEN, GITHUB_TOKEN, BRANCH_IGNORE_PATTERN, SKIP_COMMENTS } = getInputs();
+    const { PIVOTAL_TOKEN, GITHUB_TOKEN, BRANCH_IGNORE_PATTERN, SKIP_COMMENTS, PR_THRESHOLD } = getInputs();
+
+    const defaultAddtionsCount = 800;
+    const prThreshold: number = PR_THRESHOLD ? Number(PR_THRESHOLD) : defaultAddtionsCount;
+
     const {
       payload: {
         repository,
@@ -141,7 +148,7 @@ async function run() {
           addComment(client, prTitleComment);
 
           // add a comment if the PR is huge
-          if (isHumongousPR(additions)) {
+          if (isHumongousPR(additions, prThreshold)) {
             const hugePrComment: IssuesCreateCommentParams = {
               ...commonPayload,
               body: getHugePrComment(additions),
