@@ -15,7 +15,7 @@
     4. Pivotal story type (*feature*, *chore*, *bug*).
 4. Can add comments to a PR to encourage better PR practices in terms of:
     1. A good PR title (compared to the story title)
-    2. Discourages PRs which are too large (SLOC & files changed)
+    2. Discourages PRs which are too large (SLOC)
 
 ## Usage
 
@@ -35,6 +35,7 @@ name: PR lint
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
         skip-branches: '^(production-release|master|release\/v\d+)$'
         skip-comments: true
+        pr-threshold: 1000
 ```
 
 ### Options
@@ -45,6 +46,7 @@ name: PR lint
 | `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards. | true     | null    |
 | `skip-branches` | A regex to ignore running PR lint on certain branches, like production etc.                      | false    | ' '     |
 | `skip-comments` | A `Boolean` if set to `true` PR lint will skip adding lint comments for PR title.                | false    | false   |
+| `pr-threshold`  | An `Integer` based on which PR lint will add commets for a huge PR.                              | false    | 800     |
 
 Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
