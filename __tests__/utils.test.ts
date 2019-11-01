@@ -240,7 +240,8 @@ describe('getNoIdComment()', () => {
 });
 
 describe('getHugePrComment()', () => {
-  it('should return the comment content with additions included', () => {
-    expect(getHugePrComment(1000)).toContain(1000);
+  it('should return the comment content with additions and threshold', () => {
+    expect(getHugePrComment(1000, 800)).toContain(1000);
+    expect(getHugePrComment(1000, 800)).toContain(800);
   });
 });

@@ -348,7 +348,7 @@ export const isHumongousPR = (additons: number, threshold: number): boolean => a
  * @param {number} addtions
  * @return {string}
  */
-export const getHugePrComment = (additons: number): string =>
+export const getHugePrComment = (additons: number, threshold: number): string =>
   `<p>This PR is too huge for one to review :broken_heart: </p>
   <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
@@ -358,7 +358,7 @@ export const getHugePrComment = (additons: number): string =>
       </tr>
       <tr>
           <th>Expected</th>
-          <td>:arrow_down: 1000</td>
+          <td>:arrow_down: ${threshold}</td>
         </tr>
     </table>
     <p>

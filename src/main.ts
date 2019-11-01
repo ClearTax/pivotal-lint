@@ -151,7 +151,7 @@ async function run() {
           if (isHumongousPR(additions, prThreshold)) {
             const hugePrComment: IssuesCreateCommentParams = {
               ...commonPayload,
-              body: getHugePrComment(additions),
+              body: getHugePrComment(additions, prThreshold),
             };
             console.log('Adding comment for huge PR');
             addComment(client, hugePrComment);
