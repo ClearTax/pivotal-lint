@@ -32,7 +32,7 @@ describe('shouldSkipBranchLint()', () => {
     expect(shouldSkipBranchLint('foo', '[0-9]{2}')).toBeFalsy();
     expect(shouldSkipBranchLint('f00', '[0-9]{2}')).toBeTruthy();
 
-    const customBranchRegex = '^(production-release|master|release/v\\d+)$';
+    const customBranchRegex = '^(production-release|master|release\/v\\d+)$';
     expect(shouldSkipBranchLint('production-release', customBranchRegex)).toBeTruthy();
     expect(shouldSkipBranchLint('master', customBranchRegex)).toBeTruthy();
     expect(shouldSkipBranchLint('release/v77', customBranchRegex)).toBeTruthy();
