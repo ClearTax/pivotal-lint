@@ -9,6 +9,10 @@ import {
   shouldUpdatePRDescription,
   getPrDescription,
   getStoryTypeLabel,
+  isHumongousPR,
+  getHugePrComment,
+  getNoIdComment,
+  shouldAddComments,
 } from '../src/utils';
 import { HIDDEN_MARKER } from '../src/constants';
 
@@ -19,7 +23,7 @@ describe('shouldSkipBranchLint()', () => {
     expect(shouldSkipBranchLint('dependabot')).toBeTruthy();
   });
 
-  it.only('should handle custom ignore patterns', () => {
+  it('should handle custom ignore patterns', () => {
     expect(shouldSkipBranchLint('bar', '^bar')).toBeTruthy();
     expect(shouldSkipBranchLint('foobar', '^bar')).toBeFalsy();
 
@@ -199,5 +203,45 @@ describe('getStoryTypeLabel()', () => {
 
   it('should return an empty string', () => {
     expect(getStoryTypeLabel({} as any)).toEqual('');
+  });
+});
+
+describe('isHumongousPR()', () => {
+  it('should return true if additions are greater than the threshold', () => {
+    expect(isHumongousPR(2000, 500)).toBeTruthy();
+  });
+
+  it('should return false if additions are less than the threshold', () => {
+    expect(isHumongousPR(200, 500)).toBeFalsy();
+  });
+
+  it('should return false with erroneous inputs', () => {
+    expect(isHumongousPR(NaN, NaN)).toBeFalsy();
+  });
+});
+
+describe('shouldAddComments()', () => {
+  it('should return true if SKIP_COMMENTS is not set', () => {
+    expect(shouldAddComments('')).toBeTruthy();
+  });
+
+  it('should return true if SKIP_COMMENTS is set to false', () => {
+    expect(shouldAddComments('false')).toBeTruthy();
+  });
+  it('should return false if SKIP_COMMENTS is set to true', () => {
+    expect(shouldAddComments('true')).toBeFalsy();
+  });
+});
+
+describe('getNoIdComment()', () => {
+  it('should return the comment content with the branch name', () => {
+    expect(getNoIdComment('test_new_feature')).toContain('test_new_feature');
+  });
+});
+
+describe('getHugePrComment()', () => {
+  it('should return the comment content with additions and threshold', () => {
+    expect(getHugePrComment(1000, 800)).toContain(1000);
+    expect(getHugePrComment(1000, 800)).toContain(800);
   });
 });

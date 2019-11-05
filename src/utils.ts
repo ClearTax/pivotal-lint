@@ -232,14 +232,14 @@ export const shouldSkipBranchLint = (branch: string, additionalIgnorePattern?: s
  * @return string
  */
 export const getStoryTypeLabel = (story: PivotalStory): string => {
-  return story ? story.story_type : '';
+  return story && story.story_type ? story.story_type : '';
 };
 
 /**
  * Get icon based on the story type
  * @param  {string} storyType
  */
-export const getStoryIcon = (storyType: string): string => {
+const getStoryIcon = (storyType: string): string => {
   switch (storyType) {
     case 'feature':
       return `⭐️ `;
@@ -340,7 +340,7 @@ ${body}`;
  * @param {number} addtions
  * @return {boolean}
  */
-export const isHumongousPR = (additons: number): boolean => additons > 1000;
+export const isHumongousPR = (additions: number, threshold: number): boolean => additions > threshold;
 
 /**
  * Get the comment body for very huge PR
@@ -348,17 +348,17 @@ export const isHumongousPR = (additons: number): boolean => additons > 1000;
  * @param {number} addtions
  * @return {string}
  */
-export const getHugePrComment = (additons: number): string =>
+export const getHugePrComment = (additions: number, threshold: number): string =>
   `<p>This PR is too huge for one to review :broken_heart: </p>
   <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
       <tr>
-          <th>Addtions</th>
-          <td>${additons} :no_good_woman: </td>
+          <th>Additions</th>
+          <td>${additions} :no_good_woman: </td>
       </tr>
       <tr>
           <th>Expected</th>
-          <td>:arrow_down: 1000</td>
+          <td>:arrow_down: ${threshold}</td>
         </tr>
     </table>
     <p>
