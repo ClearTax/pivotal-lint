@@ -43,8 +43,8 @@ async function run() {
   try {
     const { PIVOTAL_TOKEN, GITHUB_TOKEN, BRANCH_IGNORE_PATTERN, SKIP_COMMENTS, PR_THRESHOLD } = getInputs();
 
-    const defaultAddtionsCount = 800;
-    const prThreshold: number = PR_THRESHOLD ? Number(PR_THRESHOLD) : defaultAddtionsCount;
+    const defaultAdditionsCount = 800;
+    const prThreshold: number = PR_THRESHOLD ? Number(PR_THRESHOLD) : defaultAdditionsCount;
 
     const {
       payload: {

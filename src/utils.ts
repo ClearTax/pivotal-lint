@@ -340,7 +340,7 @@ ${body}`;
  * @param {number} addtions
  * @return {boolean}
  */
-export const isHumongousPR = (additons: number, threshold: number): boolean => additons > threshold;
+export const isHumongousPR = (additions: number, threshold: number): boolean => additions > threshold;
 
 /**
  * Get the comment body for very huge PR
@@ -348,13 +348,13 @@ export const isHumongousPR = (additons: number, threshold: number): boolean => a
  * @param {number} addtions
  * @return {string}
  */
-export const getHugePrComment = (additons: number, threshold: number): string =>
+export const getHugePrComment = (additions: number, threshold: number): string =>
   `<p>This PR is too huge for one to review :broken_heart: </p>
   <img src="https://media.giphy.com/media/26tPskka6guetcHle/giphy.gif" width="400" />
     <table>
       <tr>
-          <th>Addtions</th>
-          <td>${additons} :no_good_woman: </td>
+          <th>Additions</th>
+          <td>${additions} :no_good_woman: </td>
       </tr>
       <tr>
           <th>Expected</th>
