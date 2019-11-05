@@ -211,7 +211,7 @@ describe('isHumongousPR()', () => {
     expect(isHumongousPR(2000, 500)).toBeTruthy();
   });
 
-  it('should return false if additions are lesser than the threshold', () => {
+  it('should return false if additions are less than the threshold', () => {
     expect(isHumongousPR(200, 500)).toBeFalsy();
   });
 
