@@ -1,7 +1,5 @@
 name: 'pivotal-lint'
 description: 'Add pivotal story details to pull requests'
-icon: 'check-square'
-color: 'blue'
 author: 'cleartax'
 inputs:
   github-token:
@@ -17,3 +15,6 @@ inputs:
 runs:
   using: 'node12'
   main: 'lib/index.js'
+branding:
+  icon: 'check-square'
+  color: 'blue'
