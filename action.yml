@@ -1,5 +1,7 @@
 name: 'pivotal-lint'
 description: 'Add pivotal story details to pull requests'
+icon: 'check-square'
+color: 'blue'
 author: 'cleartax'
 inputs:
   github-token:
