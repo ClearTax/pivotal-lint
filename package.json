@@ -1,8 +1,7 @@
 {
-  "name": "pr-lint",
-  "version": "0.0.0",
-  "private": true,
-  "description": "PR lint",
+  "name": "pivotal-lint",
+  "version": "2.2.1",
+  "description": "Add pivotal story details to pull requests",
   "main": "lib/index.js",
   "scripts": {
     "build": "ncc build src/main.ts -o lib",
@@ -18,7 +17,7 @@
     "node",
     "setup"
   ],
-  "author": "Rajanand",
+  "author": "cleartax",
   "license": "MIT",
   "husky": {
     "hooks": {
