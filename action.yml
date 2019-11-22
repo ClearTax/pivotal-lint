@@ -1,5 +1,5 @@
 name: 'pivotal-lint'
-description: 'Add pivotal story details to pull requests, add comments for pull request title mismatch and pull requests with too many changes'
+description: 'Add pivotal story details to pull requests'
 author: 'cleartax'
 inputs:
   github-token:
