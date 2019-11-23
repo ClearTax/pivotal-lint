@@ -2,7 +2,7 @@
 
 > A light-weight lint workflow when using GitHub along with [PivotalTracker][pivotal] for project management. Works well when used alongside [pivotal-flow][pivotal-flow].
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/cleartax/pr-lint?style=flat-square) [![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/cleartax/pivotal-flow/blob/master/LICENSE.md)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/cleartax/pivotal-lint?style=flat-square) [![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/cleartax/pivotal-flow/blob/master/LICENSE.md)
 
 <!-- toc -->
 
@@ -57,7 +57,7 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
   <figcaption>When the title of the PR is <strong>very different</strong>  compared to the title of the story</figcaption>
 </figure>
 
-**A comment discouraging PRs which are too large (based on SLOC changed).**
+**A comment discouraging PRs which are too large (based on number of lines of code changed).**
 
 <figure>
   <img src="https://user-images.githubusercontent.com/6426069/69480043-e06e6280-0e29-11ea-8e24-173355c304dd.png" width="400" />
@@ -75,7 +75,7 @@ name: pivotal-lint
   pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: cleartax/pr-lint@master
+    - uses: cleartax/pivotal-lint@master
       name: pivotal-lint
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
@@ -101,20 +101,20 @@ Since tokens are private, we suggest adding them as [GitHub secrets](https://hel
 
 ### Skipping branches
 
-Since GitHub actions take string inputs, `skip-branches` must be a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/cleartax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
+Since GitHub actions take string inputs, `skip-branches` must be a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/cleartax/pivotal-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
 
-`pivotal-lint` already skips PRs which are filed by bots (for eg. [dependabot](https://github.com/marketplace/dependabot-preview)). You can add more bots to [this list](https://github.com/cleartax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6), or add the branch-format followed by the bot PRs to the `skip-branches` option.
+`pivotal-lint` already skips PRs which are filed by bots (for eg. [dependabot](https://github.com/marketplace/dependabot-preview)). You can add more bots to [this list](https://github.com/cleartax/pivotal-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6), or add the branch-format followed by the bot PRs to the `skip-branches` option.
 
 ### Semantic Versions
 
-If you want more stability in versions of `pivotal-lint` than `@master` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pr-lint/releases).
+If you want more stability in versions of `pivotal-lint` than `@master` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pivotal-lint/releases).
 
 Example:
 
 ```yaml
 # ...
     steps:
-    - uses: cleartax/pr-lint@v2.1.0
+    - uses: cleartax/pivotal-lint@v2.1.0
       name: pivotal-lint
       # ...
 ```
