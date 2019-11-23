@@ -1,35 +1,82 @@
-# pr-lint 🧹
+# pivotal-lint 🧹
 
 > A light-weight lint workflow when using GitHub along with [PivotalTracker][pivotal] for project management. Works well when used alongside [pivotal-flow][pivotal-flow].
 
-[![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/ClearTax/pivotal-flow/blob/master/LICENSE.md)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/cleartax/pr-lint?style=flat-square) [![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/cleartax/pivotal-flow/blob/master/LICENSE.md)
+
+<!-- toc -->
+
+- [Features](#features)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [FAQ](#faq)
+
+<!-- tocstop -->
 
 ## Features
 
-1. **Validates branches that are filed as PRs**. It uses the pivotal API to provide GitHub status checks that help you avoid merging PRs without valid story IDs.
-2. **Adds a summary of the story details** to the beginning of the PR's description for better documentation & linking from GitHub → Pivotal. ![pr-lint](https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png)
-3. Automatically labels PRs based on:
-    1. Team name label based on the pivotal board name. if your pivotal board name is `Escher POD` then it will add `escher` as a label. Pivotal board name is fetched from the given story id.
-    2. `HOTFIX-PROD` - if the PR is raised against `production-release`
-    3. `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`
-    4. Pivotal story type (*feature*, *chore*, *bug*).
-4. Can add comments to a PR to encourage better PR practices in terms of:
-    1. A good PR title (compared to the story title)
-    2. Discourages PRs which are too large (SLOC)
+### PR Status Checks
+
+`pivotal-lint` adds a status check which helps you avoid merging PRs which are missing a valid story ID in the branch name. It will use the [PivotalTracker API](https://www.pivotaltracker.com/help/api/rest/v5#top) to validate a given story id.
+
+### PR Description & Labels
+
+#### Description
+
+When a PR passes the above check, `pivotal-lint` will also add the story details to the top of the PR description. It will pick details such as the story title, type, points and labels and add them to the PR description.
+
+#### Labels
+
+`pivotal-lint` will automatically label PRs with:
+
+- A _team name_ label based on the PivotalTracker Project name (the project the story belongs to). For example, if your project name is `Escher POD` then it will add `escher` as a label.
+- `HOTFIX-PROD` - if the PR is raised against `production-release`.
+- `HOTFIX-PRE-PROD` - if the PR is raised against `release/v*`.
+- Pivotal story type (*feature*, *chore*, *bug*).
+
+<figure>
+ <img src="https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png" alt="Story details and labels added to a PR" />
+ <figcaption>
+ Story details and labels added to a PR [<a href="https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png">expand</a>].
+ </figcaption>
+</figure>
+
+#### Soft-validations via comments
+
+`pivotal-lint` will add comments to a PR to encourage better PR practices:
+
+**A good PR title**
+
+<figure>
+  <img src="https://user-images.githubusercontent.com/6426069/69480647-6a6cfa00-0e2f-11ea-8750-4294f686dac7.png" />
+  <figcaption>When the title of the PR is <strong>slightly different</strong> compared to the title of the story</figcaption>
+</figure>
+
+<figure>
+  <img src="https://user-images.githubusercontent.com/6426069/69480647-6a6cfa00-0e2f-11ea-8750-4294f686dac7.png" />
+  <figcaption>When the title of the PR is <strong>very different</strong>  compared to the title of the story</figcaption>
+</figure>
+
+**A comment discouraging PRs which are too large (based on SLOC changed).**
+
+<figure>
+  <img src="https://user-images.githubusercontent.com/6426069/69480043-e06e6280-0e29-11ea-8e24-173355c304dd.png" width="400" />
+  <figcaption>Batman says no large PRs 🦇</figcaption>
+</figure>
 
 ## Usage
 
-To make pr-lint a part of your workflow, just add a `pr-lint.yml` file in your `.github/workflows/` directory in your git repo.
+To make pivotal-lint a part of your workflow, just add a `pivotal-lint.yml` file in your `.github/workflows/` directory in your GitHub repository.
 
-```yaml
-name: PR lint
+```yml
+name: pivotal-lint
  on: [pull_request]
  jobs:
-  pr_lint:
+  pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Verify Pivotal story ID & add relevant labels
-      uses: cleartax/pr-lint@master
+    - uses: cleartax/pr-lint@master
+      name: pivotal-lint
       with:
         github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
@@ -37,6 +84,8 @@ name: PR lint
         skip-comments: true
         pr-threshold: 1000
 ```
+
+It can also be used as part of an existing workflow by adding it as a step.
 
 ### Options
 
@@ -52,22 +101,21 @@ Since tokens are private, we suggest adding them as [GitHub secrets](https://hel
 
 ### Skipping branches
 
-Since GitHub actions take string inputs, you must generate a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/ClearTax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
+Since GitHub actions take string inputs, `skip-branches` must be a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/cleartax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
 
-`pr-lint` already skips PRs which are filed by bots (eg dependabot). You can add more bots to [this list](https://github.com/ClearTax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6).
+`pivotal-lint` already skips PRs which are filed by bots (for eg. [dependabot](https://github.com/marketplace/dependabot-preview)). You can add more bots to [this list](https://github.com/cleartax/pr-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6), or add the branch-format followed by the bot PRs to the `skip-branches` option.
 
-### Versions
+### Semantic Versions
 
-If you want more stability in versions than `@master` you can also use the [semantic releases for pr-lint](https://github.com/ClearTax/pr-lint/releases).
+If you want more stability in versions of `pivotal-lint` than `@master` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pr-lint/releases).
 
 Example:
 
 ```yaml
 # ...
-  pr_lint:
     steps:
-    - name: Verify Pivotal story ID & add relevant labels
-      uses: cleartax/pr-lint@v2.1.0
+    - uses: cleartax/pr-lint@v2.1.0
+      name: pivotal-lint
       # ...
 ```
 
@@ -78,12 +126,12 @@ Follow the instructions [here](https://help.github.com/en/articles/creating-a-ja
 ## FAQ
 
 <details>
-  <summary>Why is a Pivotal ID required in branch names?</summary>
+  <summary>Why is a PivotalTracker ID required in the branch names?</summary>
 
-Pivotal id is required in order to:
+PivotalTracker ID is required in order to:
 
 - Automate change-logs and release notes ⚙️.
-- Automate alerts to QA/Product teams and/or other external stake-holders 🔊.
+- Automate alerts to QA/Product teams and other external stake-holders 🔊.
 - Help us retrospect the sprint progress 📈.
 
 </details>
@@ -101,4 +149,4 @@ Yes, check out [pivotal-flow][pivotal-flow] 🚀
 </details>
 
 [pivotal]: https://www.pivotaltracker.com/features
-[pivotal-flow]: https://github.com/ClearTax/pivotal-flow
+[pivotal-flow]: https://github.com/cleartax/pivotal-flow
