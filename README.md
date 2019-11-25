@@ -88,14 +88,14 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 
 <figure>
   <img src="https://user-images.githubusercontent.com/6426069/69480647-6a6cfa00-0e2f-11ea-8750-4294f686dac7.png" />
-  <figcaption>When the title of the PR is <strong>very different</strong>  compared to the title of the story</figcaption>
+  <figcaption>When the title of the PR is <strong>slightly different</strong> compared to the title of the story</figcaption>
 </figure>
 
 ---
 
 <figure>
-  <img src="https://user-images.githubusercontent.com/6426069/69525498-3b20cf00-0f8e-11ea-8eb3-9832768d9e12.png" />
-  <figcaption>When the title of the PR is <strong>slightly different</strong> compared to the title of the story</figcaption>
+  <img src="https://user-images.githubusercontent.com/6426069/69526103-7243b000-0f8f-11ea-9deb-acb8cbb6610b.png" />
+  <figcaption>When the title of the PR is <strong>very different</strong>  compared to the title of the story</figcaption>
 </figure>
 
 ---
@@ -103,10 +103,9 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 **A comment discouraging PRs which are too large (based on number of lines of code changed).**
 
 <figure>
-  <img src="https://user-images.githubusercontent.com/6426069/69480043-e06e6280-0e29-11ea-8e24-173355c304dd.png" width="400" />
+  <img src="https://user-images.githubusercontent.com/6426069/69480043-e06e6280-0e29-11ea-8e24-173355c304dd.png" />
   <figcaption>Batman says no large PRs 🦇</figcaption>
 </figure>
-
 
 ### Options
 
