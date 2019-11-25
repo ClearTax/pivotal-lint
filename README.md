@@ -6,13 +6,13 @@
 
 <!-- toc -->
 
+- [Installation](#installation)
 - [Features](#features)
   - [PR Status Checks](#pr-status-checks)
   - [PR Description & Labels](#pr-description--labels)
     - [Description](#description)
     - [Labels](#labels)
     - [Soft-validations via comments](#soft-validations-via-comments)
-- [Usage](#usage)
   - [Options](#options)
   - [Skipping branches](#skipping-branches)
   - [Semantic Versions](#semantic-versions)
@@ -20,6 +20,29 @@
 - [FAQ](#faq)
 
 <!-- tocstop -->
+
+## Installation
+
+To make `pivotal-lint` a part of your workflow, just add a `pivotal-lint.yml` file in your `.github/workflows/` directory in your GitHub repository.
+
+```yml
+name: pivotal-lint
+ on: [pull_request]
+ jobs:
+  pivotal-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: cleartax/pivotal-lint@master
+      name: pivotal-lint
+      with:
+        github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
+        skip-branches: '^(production-release|master|release\/v\d+)$'
+        skip-comments: true
+        pr-threshold: 1000
+```
+
+It can also be used as part of an existing workflow by adding it as a step. More information about the [options here](#options).
 
 ## Features
 
@@ -72,28 +95,7 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
   <figcaption>Batman says no large PRs 🦇</figcaption>
 </figure>
 
-## Usage
 
-To make pivotal-lint a part of your workflow, just add a `pivotal-lint.yml` file in your `.github/workflows/` directory in your GitHub repository.
-
-```yml
-name: pivotal-lint
- on: [pull_request]
- jobs:
-  pivotal-lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: cleartax/pivotal-lint@master
-      name: pivotal-lint
-      with:
-        github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-        pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
-        skip-branches: '^(production-release|master|release\/v\d+)$'
-        skip-comments: true
-        pr-threshold: 1000
-```
-
-It can also be used as part of an existing workflow by adding it as a step.
 
 ### Options
 
