@@ -7,7 +7,15 @@
 <!-- toc -->
 
 - [Features](#features)
+  - [PR Status Checks](#pr-status-checks)
+  - [PR Description & Labels](#pr-description--labels)
+    - [Description](#description)
+    - [Labels](#labels)
+    - [Soft-validations via comments](#soft-validations-via-comments)
 - [Usage](#usage)
+  - [Options](#options)
+  - [Skipping branches](#skipping-branches)
+  - [Semantic Versions](#semantic-versions)
 - [Contributing](#contributing)
 - [FAQ](#faq)
 
