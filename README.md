@@ -8,6 +8,7 @@
 <!-- toc -->
 
 - [Installation](#installation)
+  - [Semantic Versions](#semantic-versions)
 - [Features](#features)
   - [PR Status Checks](#pr-status-checks)
   - [PR Description & Labels](#pr-description--labels)
@@ -16,7 +17,6 @@
     - [Soft-validations via comments](#soft-validations-via-comments)
   - [Options](#options)
   - [Skipping branches](#skipping-branches)
-  - [Semantic Versions](#semantic-versions)
 - [Contributing](#contributing)
 - [FAQ](#faq)
 
@@ -33,7 +33,7 @@ name: pivotal-lint
   pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: cleartax/pivotal-lint@latest
+    - uses: cleartax/pivotal-lint@master
       name: pivotal-lint
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -44,6 +44,20 @@ name: pivotal-lint
 ```
 
 It can also be used as part of an existing workflow by adding it as a step. More information about the [options here](#options).
+
+### Semantic Versions
+
+If you want more stability in versions of `pivotal-lint` than `@master` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pivotal-lint/releases).
+
+Example:
+
+```yaml
+# ...
+    steps:
+    - uses: cleartax/pivotal-lint@v2.3.0
+      name: pivotal-lint
+      # ...
+```
 
 ## Features
 
@@ -124,20 +138,6 @@ Since tokens are private, we suggest adding them as [GitHub secrets](https://hel
 Since GitHub actions take string inputs, `skip-branches` must be a regex which will work for all sets of branches you want to ignore. This is useful for merging protected/default branches into other branches. Check out some [examples in the tests](https://github.com/cleartax/pivotal-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/__tests__/utils.test.ts#L30-L41).
 
 `pivotal-lint` already skips PRs which are filed by bots (for eg. [dependabot](https://github.com/marketplace/dependabot-preview)). You can add more bots to [this list](https://github.com/cleartax/pivotal-lint/blob/2bb72327ef04ab028caf84a099ffbc08b4dd0959/src/constants.ts#L4-L6), or add the branch-format followed by the bot PRs to the `skip-branches` option.
-
-### Semantic Versions
-
-If you want more stability in versions of `pivotal-lint` than `@latest` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pivotal-lint/releases).
-
-Example:
-
-```yaml
-# ...
-    steps:
-    - uses: cleartax/pivotal-lint@v2.1.0
-      name: pivotal-lint
-      # ...
-```
 
 ## Contributing
 
