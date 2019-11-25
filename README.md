@@ -126,10 +126,10 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 | key             | description                                                                                      | required | default |
 | --------------- | ------------------------------------------------------------------------------------------------ | -------- | ------- |
 | `github-token`  | Token used to update PR description. `GITHUB_TOKEN` is already available [when you use GitHub actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret), so all that is required is to pass it as a param here. | true     | null    |
-| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards. Check [here](https://www.pivotaltracker.com/help/articles/api_token/) on how to get a Pivotal API Token| true     | null    |
+| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your PivotalTracker projects. Check [here](https://www.pivotaltracker.com/help/articles/api_token/) on how to get a Pivotal API Token| true     | null    |
 | `skip-branches` | A regex to ignore running PR lint on certain branches, like production etc.                      | false    | ' '     |
 | `skip-comments` | A `Boolean` if set to `true` PR lint will skip adding lint comments for PR title.                | false    | false   |
-| `pr-threshold`  | An `Integer` based on which PR lint will add commets for a huge PR.                              | false    | 800     |
+| `pr-threshold`  | An `Integer` based on which PR lint will add a comment discouraging huge PRs.                              | false    | 800     |
 
 Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
