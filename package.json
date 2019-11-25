@@ -1,6 +1,6 @@
 {
   "name": "pivotal-lint",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "Add pivotal story details to pull requests",
   "main": "lib/index.js",
   "scripts": {
