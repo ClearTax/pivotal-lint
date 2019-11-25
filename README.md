@@ -69,7 +69,7 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 <figure>
  <img src="https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png" alt="Story details and labels added to a PR" />
  <figcaption>
- Story details and labels added to a PR [<a href="https://assets1.cleartax-cdn.com/cleargst-frontend/misc/1568800226_pr-lint.png">expand</a>].
+ Story details and labels added to a PR.
  </figcaption>
 </figure>
 
