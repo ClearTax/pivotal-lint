@@ -2,7 +2,8 @@
 
 > A light-weight lint workflow when using GitHub along with [PivotalTracker][pivotal] for project management. Works well when used alongside [pivotal-flow][pivotal-flow].
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/cleartax/pivotal-lint?style=flat-square) [![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/cleartax/pivotal-flow/blob/master/LICENSE.md)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/cleartax/pivotal-lint?style=flat-square)
+[![GitHub](https://img.shields.io/github/license/cleartax/pivotal-flow?style=flat-square)](https://github.com/cleartax/pivotal-flow/blob/master/LICENSE.md)
 
 <!-- toc -->
 
@@ -35,7 +36,7 @@ name: pivotal-lint
     - uses: cleartax/pivotal-lint@master
       name: pivotal-lint
       with:
-        github-token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
         skip-branches: '^(production-release|master|release\/v\d+)$'
         skip-comments: true
@@ -79,14 +80,25 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 **A good PR title**
 
 <figure>
-  <img src="https://user-images.githubusercontent.com/6426069/69480647-6a6cfa00-0e2f-11ea-8750-4294f686dac7.png" />
-  <figcaption>When the title of the PR is <strong>slightly different</strong> compared to the title of the story</figcaption>
+  <img src="https://user-images.githubusercontent.com/6426069/69525276-c6e62b80-0f8d-11ea-9db4-23d524b5276c.png" />
+  <figcaption>When the title of the PR matches the title of the story well.</figcaption>
 </figure>
+
+---
 
 <figure>
   <img src="https://user-images.githubusercontent.com/6426069/69480647-6a6cfa00-0e2f-11ea-8750-4294f686dac7.png" />
   <figcaption>When the title of the PR is <strong>very different</strong>  compared to the title of the story</figcaption>
 </figure>
+
+---
+
+<figure>
+  <img src="https://user-images.githubusercontent.com/6426069/69525498-3b20cf00-0f8e-11ea-8eb3-9832768d9e12.png" />
+  <figcaption>When the title of the PR is <strong>slightly different</strong> compared to the title of the story</figcaption>
+</figure>
+
+---
 
 **A comment discouraging PRs which are too large (based on number of lines of code changed).**
 
@@ -96,13 +108,12 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 </figure>
 
 
-
 ### Options
 
 | key             | description                                                                                      | required | default |
 | --------------- | ------------------------------------------------------------------------------------------------ | -------- | ------- |
-| `github-token`  | Token used to update PR description. Must have write access to your repository.                  | true     | null    |
-| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards. | true     | null    |
+| `github-token`  | Token used to update PR description. `GITHUB_TOKEN` is already available [when you use GitHub actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret), so all that is required is to pass it as a param here. | true     | null    |
+| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards. Check [here](https://www.pivotaltracker.com/help/articles/api_token/) on how to get a Pivotal API Token| true     | null    |
 | `skip-branches` | A regex to ignore running PR lint on certain branches, like production etc.                      | false    | ' '     |
 | `skip-comments` | A `Boolean` if set to `true` PR lint will skip adding lint comments for PR title.                | false    | false   |
 | `pr-threshold`  | An `Integer` based on which PR lint will add commets for a huge PR.                              | false    | 800     |
