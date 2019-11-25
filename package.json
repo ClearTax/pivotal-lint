@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cleartax/pr-lint"
+    "url": "git+https://github.com/cleartax/pivotal-lint"
   },
   "keywords": [
     "actions",

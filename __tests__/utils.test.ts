@@ -146,7 +146,7 @@ describe('shouldUpdatePRDescription()', () => {
   <br />
 </details>
 <!--
-  do not remove this marker as it will break PR-lint's functionality.
+  do not remove this marker as it will break pivotal-lint's functionality.
   ${HIDDEN_MARKER}
 -->
 

@@ -326,7 +326,7 @@ export const getPrDescription = (body: string = '', story: PivotalStory): string
   <p>${description || 'Oops, the story creator did not add any description.'}</p>
 </details>
 <!--
-  do not remove this marker as it will break pr-lint's functionality.
+  do not remove this marker as it will break pivotal-lint's functionality.
   ${HIDDEN_MARKER}
 -->
 

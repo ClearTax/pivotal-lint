@@ -76,7 +76,7 @@ async function run() {
     const client: github.GitHub = new github.GitHub(GITHUB_TOKEN);
 
     if (!headBranch && !baseBranch) {
-      const commentBody = 'pr-lint is unable to determine the head and base branch';
+      const commentBody = 'pivotal-lint is unable to determine the head and base branch';
       const comment: IssuesCreateCommentParams = {
         ...commonPayload,
         body: commentBody,
