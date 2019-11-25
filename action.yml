@@ -12,10 +12,12 @@ inputs:
     description: 'A regex to ignore running on certain branches, like production etc.'
     required: false
     default: ''
-  skip-comments: 'A boolean if set to true, will skip adding lint comments for PR title.'
+  skip-comments:
+    description: 'A boolean if set to true, will skip adding lint comments for PR title.'
     required: false
     default: false
-  pr-threshold: 'An `Integer` based on which pivotal-lint add a comment discouraging huge PRs. Is disabled by `skip-comments`'
+  pr-threshold:
+    description: 'An `Integer` based on which pivotal-lint add a comment discouraging huge PRs. Is disabled by `skip-comments`'
     required: false
     default: 800
 runs:
