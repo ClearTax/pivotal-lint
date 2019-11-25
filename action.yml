@@ -3,15 +3,21 @@ description: 'Add pivotal story details to pull requests'
 author: 'cleartax'
 inputs:
   github-token:
-    description: Token used to update PR description. Must have write access to your repository.
+    description: 'Token used to update PR description and add labels. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
     required: true
   pivotal-token:
-    description: API Token used to fetch Pivotal Story information. Must have read access to your Pivotal boards.
+    description: 'API Token used to fetch Pivotal Story information. Must have read access to your PivotalTracker Projects.'
     required: true
   skip-branches:
-    description: A regex to ignore running PR lint on certain branches
+    description: 'A regex to ignore running on certain branches, like production etc.'
     required: false
     default: ''
+  skip-comments: 'A boolean if set to true, will skip adding lint comments for PR title.'
+    required: false
+    default: false
+  pr-threshold: 'An `Integer` based on which pivotal-lint add a comment discouraging huge PRs. Is disabled by `skip-comments`'
+    required: false
+    default: 800
 runs:
   using: 'node12'
   main: 'lib/index.js'

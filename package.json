@@ -1,6 +1,6 @@
 {
   "name": "pivotal-lint",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "Add pivotal story details to pull requests",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cleartax/pr-lint"
+    "url": "git+https://github.com/cleartax/pivotal-lint"
   },
   "keywords": [
     "actions",
