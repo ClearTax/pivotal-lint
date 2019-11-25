@@ -33,7 +33,7 @@ name: pivotal-lint
   pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: cleartax/pivotal-lint@master
+    - uses: cleartax/pivotal-lint@latest
       name: pivotal-lint
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -128,7 +128,7 @@ Since GitHub actions take string inputs, `skip-branches` must be a regex which w
 
 ### Semantic Versions
 
-If you want more stability in versions of `pivotal-lint` than `@master` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pivotal-lint/releases).
+If you want more stability in versions of `pivotal-lint` than `@latest` you can also use the [semantic releases for pivotal-lint](https://github.com/cleartax/pivotal-lint/releases).
 
 Example:
 
