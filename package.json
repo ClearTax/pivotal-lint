@@ -6,7 +6,8 @@
   "scripts": {
     "build": "ncc build src/main.ts -o lib",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "docs:toc": "markdown-toc -i --bullets='-' README.md"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "husky": "^3.0.5",
     "jest": "^24.8.0",
     "jest-circus": "^24.7.1",
+    "markdown-toc": "^1.2.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
   }
