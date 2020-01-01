@@ -131,7 +131,7 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 | `skip-comments` | A `Boolean` if set to `true` `pivotal-lint` will skip adding lint comments for PR title.                | false    | false   |
 | `pr-threshold`  | An `Integer` based on which `pivotal-lint` will add a comment discouraging huge PRs.                              | false    | 800     |
 
-Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
+Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
 
 ### Skipping branches
 
