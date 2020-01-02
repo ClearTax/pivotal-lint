@@ -28,19 +28,20 @@ To make `pivotal-lint` a part of your workflow, just add a `pivotal-lint.yml` fi
 
 ```yml
 name: pivotal-lint
- on: [pull_request]
- jobs:
+on: [pull_request]
+
+jobs:
   pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: cleartax/pivotal-lint@master
-      name: pivotal-lint
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
-        skip-branches: '^(production-release|master|release\/v\d+)$'
-        skip-comments: true
-        pr-threshold: 1000
+      - uses: cleartax/pivotal-lint@master
+        name: pivotal-lint
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
+          skip-branches: '^(production-release|master|release\/v\d+)$'
+          skip-comments: true
+          pr-threshold: 1000
 ```
 
 It can also be used as part of an existing workflow by adding it as a step. More information about the [options here](#options).
