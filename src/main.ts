@@ -18,7 +18,7 @@ import {
   getPrTitleComment,
   getHugePrComment,
   isHumongousPR,
-  getNoIdComment,
+  addNoIdComment,
   shouldAddComments,
 } from './utils';
 import { PullRequestParams, PivotalDetails } from './types';
@@ -96,11 +96,7 @@ async function run() {
 
     const pivotalId = getPivotalId(headBranch);
     if (!pivotalId) {
-      const comment: IssuesCreateCommentParams = {
-        ...commonPayload,
-        body: getNoIdComment(headBranch),
-      };
-      await addComment(client, comment);
+      await addNoIdComment(client, headBranch, commonPayload);
 
       core.setFailed('Pivotal id is missing in your branch.');
       process.exit(1);
@@ -159,11 +155,7 @@ async function run() {
         }
       }
     } else {
-      const comment: IssuesCreateCommentParams = {
-        ...commonPayload,
-        body: getNoIdComment(headBranch),
-      };
-      await addComment(client, comment);
+      await addNoIdComment(client, headBranch, commonPayload);
 
       core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
       process.exit(1);

@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import similarity from 'string-similarity';
-import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams } from '@octokit/rest';
+import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams, IssuesListCommentsParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
 import { PivotalStory, PivotalProjectResponse, PivotalDetails, Label } from './types';
 
@@ -251,6 +251,39 @@ const getStoryIcon = (storyType: string): string => {
       return '';
   }
 };
+
+/**
+ * Helpful function to add a comment that we couldn't find the Pivotal ID
+ * of this comment. Will attempt to only add once.
+ */
+export const addNoIdComment = async (
+  client: github.GitHub,
+  branch: string,
+  params: IssuesListCommentsParams
+) => {
+  const { data: comments } = await client.issues.listComments(params);
+
+  const noIdComment = getNoIdComment(branch);
+
+  // Find a previously created comment by our bot
+  const previousComments = comments.filter(
+    comment => comment.body.includes(noIdComment),
+  );
+
+  if (previousComments.length > 0) {
+    // Update existing comment
+    const { id } = previousComments[0];
+    console.log(`Comment already exists as comment #${id}`);
+  } else {
+    // Insert a new comment
+    console.log('Adding a new comment');
+    const comment: IssuesCreateCommentParams = {
+      ...params,
+      body: noIdComment
+    };
+    await addComment(client, comment);
+  }
+}
 
 /**
  * Returns true if the body contains the hidden marker. Used to avoid adding
