@@ -120,7 +120,7 @@ async function run() {
       const labels: string[] = filterArray([podLabel, hotfixLabel, storyTypeLabel]);
 
       console.log('Project name -> ', projectName);
-      console.log('Adding lables -> ', labels);
+      console.log('Adding labels -> ', labels);
 
       const labelData: IssuesAddLabelsParams = {
         ...commonPayload,
