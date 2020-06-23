@@ -28,19 +28,20 @@ To make `pivotal-lint` a part of your workflow, just add a `pivotal-lint.yml` fi
 
 ```yml
 name: pivotal-lint
- on: [pull_request]
- jobs:
+on: [pull_request]
+
+jobs:
   pivotal-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: cleartax/pivotal-lint@master
-      name: pivotal-lint
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
-        skip-branches: '^(production-release|master|release\/v\d+)$'
-        skip-comments: true
-        pr-threshold: 1000
+      - uses: cleartax/pivotal-lint@master
+        name: pivotal-lint
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
+          skip-branches: '^(production-release|master|release\/v\d+)$'
+          skip-comments: true
+          pr-threshold: 1000
 ```
 
 It can also be used as part of an existing workflow by adding it as a step. More information about the [options here](#options).
@@ -131,7 +132,7 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 | `skip-comments` | A `Boolean` if set to `true` `pivotal-lint` will skip adding lint comments for PR title.                | false    | false   |
 | `pr-threshold`  | An `Integer` based on which `pivotal-lint` will add a comment discouraging huge PRs.                              | false    | 800     |
 
-Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
+Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
 
 ### Skipping branches
 
