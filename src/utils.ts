@@ -378,7 +378,7 @@ export const getPrDescription = (body: string = '', story: PivotalStory, reviews
 ${requireDesignReview && `<details>
   <summary><strong>Pivotal Design Review</strong></summary>
   <br />
-  <p>[ ] Design review is required for this PR, please ask @AMS-00 for review.</p>
+  <p>- [ ] Design review is required for this PR, please ask @AMS-00 for review.</p>
 </details>
 <br />`}
 
