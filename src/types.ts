@@ -36,6 +36,16 @@ export const enum StoryState {
   Unstarted = 'unstarted',
 }
 
+
+export interface PivotalStoryReview {
+  kind: string,
+  story_id: number,
+  review_type_id: number,
+  status: string,
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface PivotalStory {
   /**
    * Title/name of the story.
@@ -94,6 +104,7 @@ export interface PivotalProjectResponse {
 }
 
 export interface PivotalDetails {
+  reviews: PivotalStoryReview[];
   story: PivotalStory;
   project: PivotalProjectResponse;
 }

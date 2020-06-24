@@ -104,10 +104,11 @@ async function run() {
 
     const { getPivotalDetails } = pivotal(PIVOTAL_TOKEN);
     const pivotalDetails: PivotalDetails = await getPivotalDetails(pivotalId);
-    if (pivotalDetails && pivotalDetails.project && pivotalDetails.story) {
+    if (pivotalDetails && pivotalDetails.project && pivotalDetails.story && pivotalDetails.reviews) {
       const {
         project: { name: projectName },
         story,
+        reviews
       } = pivotalDetails;
 
       const podLabel: string = getPodLabel(projectName);
@@ -130,7 +131,7 @@ async function run() {
           owner,
           repo,
           pull_number: prNumber,
-          body: getPrDescription(prBody, story),
+          body: getPrDescription(prBody, story, reviews),
         };
         await updatePrDetails(client, prData);
 

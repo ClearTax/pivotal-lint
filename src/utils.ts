@@ -4,7 +4,7 @@ import * as github from '@actions/github';
 import similarity from 'string-similarity';
 import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams, IssuesListCommentsParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
-import { PivotalStory, PivotalProjectResponse, PivotalDetails, Label } from './types';
+import {PivotalStory, PivotalProjectResponse, PivotalDetails, Label, PivotalStoryReview} from './types';
 
 /**
  *  Extract pivotal id from the branch name
@@ -17,6 +17,11 @@ export const getPivotalId = (branch: string): string => {
   }
   return '';
 };
+
+/**
+  Mention Me Design Review Type ID
+ */
+const MM_DESIGN_REVIEW_TYPE_ID = 4884434;
 
 export const LABELS = {
   HOTFIX_PRE_PROD: 'HOTFIX-PRE-PROD',
@@ -50,6 +55,14 @@ export const pivotal = (pivotalToken: string) => {
   });
 
   /**
+   * Get review details based on project and story id as Tracker API doesn't include the review details
+   * via getStoryDetails
+   */
+  const getReviewDetails = async (projectId: string, storyId: string): Promise<PivotalStory> => {
+    return request.get(`/projects/${projectId}/stories/${storyId}/reviews`).then(res => res.data);
+  };
+
+  /**
    * Get story details based on story id
    */
   const getStoryDetails = async (storyId: string): Promise<PivotalStory> => {
@@ -75,7 +88,11 @@ export const pivotal = (pivotalToken: string) => {
     console.log('Story url ->', url);
 
     const project: PivotalProjectResponse = await getProjectDetails(project_id);
+
+    const reviews: PivotalStoryReview[] = await getReviewDetails(project_id, pivotalId);
+
     const response: PivotalDetails = {
+      reviews,
       story,
       project,
     };
@@ -86,6 +103,7 @@ export const pivotal = (pivotalToken: string) => {
     getPivotalDetails,
     getStoryDetails,
     getProjectDetails,
+    getReviewDetails
   };
 };
 
@@ -315,9 +333,14 @@ const getEstimateForStoryType = (story: PivotalStory) => {
  * @param  {StoryResponse} story
  * @returns string
  */
-export const getPrDescription = (body: string = '', story: PivotalStory): string => {
+export const getPrDescription = (body: string = '', story: PivotalStory, reviews: PivotalStoryReview[]): string => {
   const { url, id, story_type, labels, description, name } = story;
   const labelsArr = (labels as Label[]).map((label: { name: string }) => label.name).join(', ');
+  const requireDesignReview = reviews.filter(
+      (review: PivotalStoryReview) => review.review_type_id === MM_DESIGN_REVIEW_TYPE_ID
+  ).length > 0;
+
+  console.log("Require Design review", requireDesignReview);
 
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
@@ -353,6 +376,14 @@ export const getPrDescription = (body: string = '', story: PivotalStory): string
   </table>
 </details>
 <br />
+
+${requireDesignReview && `<details>
+  <summary><strong>Pivotal Design Review</strong></summary>
+  <br />
+  <p>[ ] Design review is required for this PR, please ask @AMS-00 for review.</p>
+</details>
+<br />`}
+
 <details>
   <summary><strong>Pivotal Description</strong></summary>
   <br />
