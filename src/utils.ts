@@ -385,7 +385,7 @@ ${requireDesignReview && `<details>
 <br />`}
 
 <details>
-  <summary><strong>Pivotal Description</strong></summary>
+  <summary><strong>Pivotal Descriptionss</strong></summary>
   <br />
   <p>${description || 'Oops, the story creator did not add any description.'}</p>
 </details>
