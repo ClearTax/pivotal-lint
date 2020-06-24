@@ -4,7 +4,14 @@ import * as github from '@actions/github';
 import similarity from 'string-similarity';
 import { IssuesAddLabelsParams, PullsUpdateParams, IssuesCreateCommentParams, IssuesListCommentsParams } from '@octokit/rest';
 import { MARKER_REGEX, HIDDEN_MARKER, BOT_BRANCH_PATTERNS, DEFAULT_BRANCH_PATTERNS } from './constants';
-import {PivotalStory, PivotalProjectResponse, PivotalDetails, Label, PivotalStoryReview} from './types';
+import {
+  PivotalStory,
+  PivotalProjectResponse,
+  PivotalDetails,
+  Label,
+  Review,
+  PivotalProjectMembership
+} from './types';
 
 /**
  *  Extract pivotal id from the branch name
@@ -53,8 +60,8 @@ export const pivotal = (pivotalToken: string) => {
    * Get review details based on project and story id as Tracker API doesn't include the review details
    * via getStoryDetails
    */
-  const getReviewDetails = async (projectId: number, storyId: string): Promise<PivotalStoryReview[]> => {
-    return request.get(`/projects/${projectId}/stories/${storyId}/reviews`).then(res => res.data);
+  const getReviewDetails = async (projectId: number, storyId: string): Promise<Review[]> => {
+    return request.get(`/projects/${projectId}/stories/${storyId}/reviews?fields=review_type(name,hidden),reviewer_id,status`).then(res => res.data);
   };
 
   /**
@@ -72,6 +79,10 @@ export const pivotal = (pivotalToken: string) => {
     return request.get(`/projects/${projectId}`).then(res => res.data);
   };
 
+  const getProjectMembershipDetails = async (projectId: number): Promise<PivotalProjectMembership[]> => {
+    return request.get(`/projects/${projectId}/memberships?fields=person(name)`).then(res => res.data);
+  };
+
   /**
    * Get both story and project details
    */
@@ -84,12 +95,15 @@ export const pivotal = (pivotalToken: string) => {
 
     const project: PivotalProjectResponse = await getProjectDetails(project_id);
 
-    const reviews: PivotalStoryReview[] = await getReviewDetails(project_id, pivotalId);
+    const reviews: Review[] = await getReviewDetails(project_id, pivotalId);
+
+    const memberships: PivotalProjectMembership[] = await getProjectMembershipDetails(project_id);
 
     const response: PivotalDetails = {
       story,
       project,
       reviews,
+      memberships,
     };
     return response;
   };
@@ -203,7 +217,7 @@ export const getPrTitleComment = (storyTitle: string, prTitle: string): string =
   <img src="https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif" width="400" />`;
 };
 
-/**
+/** swz
  * Remove invalid entries from an array
  * @param {Array} arr
  */
@@ -264,6 +278,14 @@ const getStoryIcon = (storyType: string): string => {
       return '';
   }
 };
+
+const getPivotalReviewReminders = (reviews: Review[], memberships: PivotalProjectMembership[]): string[] => {
+  return reviews.map((review) => {
+    const person = memberships.filter(member => member.person.id && member.person.id === review.reviewer_id);
+
+    return `[ ] ${review.review_type.name} ${person ? '(' + person  + ')': ''}`;
+  });
+}
 
 /**
  * Helpful function to add a comment that we couldn't find the Pivotal ID
@@ -328,15 +350,14 @@ const getEstimateForStoryType = (story: PivotalStory) => {
  * @param  {StoryResponse} story
  * @returns string
  */
-export const getPrDescription = (body: string = '', story: PivotalStory, reviews: PivotalStoryReview[]): string => {
+export const getPrDescription = (
+    body: string = '',
+    story: PivotalStory,
+    reviews: Review[],
+    memberships: PivotalProjectMembership[]
+): string => {
   const { url, id, story_type, labels, description, name } = story;
   const labelsArr = (labels as Label[]).map((label: { name: string }) => label.name).join(', ');
-
-  // Mention Me Design Review Type IDs
-  const mmDesignReviewTypes = [4013928, 4884434];
-  const requireDesignReview = reviews.filter(
-      (review: PivotalStoryReview) => mmDesignReviewTypes.indexOf(review.review_type_id) !== -1
-  ).length > 0;
 
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
@@ -373,11 +394,11 @@ export const getPrDescription = (body: string = '', story: PivotalStory, reviews
 </details>
 <br />
 
-${requireDesignReview && `<details open>
-  <summary><strong>Pivotal Design Review</strong></summary>
+${reviews.length > 0 && `<details open>
+  <summary><strong>Pivotal Review</strong></summary>
   <br />
   
-  - [ ] Design review is required for this PR, make sure to ask @AMS-00 for review once finished.
+  ${getPivotalReviewReminders(reviews, memberships).join('\r\n')}
 </details>
 <br />`}
 
