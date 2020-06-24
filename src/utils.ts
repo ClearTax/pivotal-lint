@@ -338,8 +338,6 @@ export const getPrDescription = (body: string = '', story: PivotalStory, reviews
       (review: PivotalStoryReview) => mmDesignReviewTypes.indexOf(review.review_type_id) !== -1
   ).length > 0;
 
-  console.log("Require Design review", requireDesignReview);
-
   return `
 <h2><a href="${url}" target="_blank">Story #${id}</a></h2>
 
