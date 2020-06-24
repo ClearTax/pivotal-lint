@@ -20,6 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0577532f-02de-46a1-ad75-ac2a6468823b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.ts" afterDir="false" />
     </list>
@@ -70,7 +71,7 @@
       <option name="presentableId" value="Default" />
       <updated>1592994088120</updated>
       <workItem from="1592994090532" duration="9049000" />
-      <workItem from="1593004398972" duration="3367000" />
+      <workItem from="1593004398972" duration="4029000" />
     </task>
     <servers />
   </component>
@@ -127,10 +128,10 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="681" y="246" key="RollbackChangesDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1593004175658" />
-    <state x="541" y="291" width="822" height="490" key="find.popup" timestamp="1593003485743">
+    <state x="541" y="291" width="822" height="490" key="find.popup" timestamp="1593009853082">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
-    <state x="541" y="291" width="822" height="490" key="find.popup/0.23.1680.1027@0.23.1680.1027" timestamp="1593003485743" />
+    <state x="541" y="291" width="822" height="490" key="find.popup/0.23.1680.1027@0.23.1680.1027" timestamp="1593009853082" />
     <state x="505" y="187" width="670" height="676" key="search.everywhere.popup" timestamp="1592997977366">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
