@@ -58,7 +58,7 @@ export const pivotal = (pivotalToken: string) => {
    * Get review details based on project and story id as Tracker API doesn't include the review details
    * via getStoryDetails
    */
-  const getReviewDetails = async (projectId: string, storyId: string): Promise<PivotalStory> => {
+  const getReviewDetails = async (projectId: number, storyId: string): Promise<PivotalStoryReview[]> => {
     return request.get(`/projects/${projectId}/stories/${storyId}/reviews`).then(res => res.data);
   };
 
@@ -92,9 +92,9 @@ export const pivotal = (pivotalToken: string) => {
     const reviews: PivotalStoryReview[] = await getReviewDetails(project_id, pivotalId);
 
     const response: PivotalDetails = {
-      reviews,
       story,
       project,
+      reviews,
     };
     return response;
   };
