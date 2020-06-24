@@ -18,11 +18,6 @@ export const getPivotalId = (branch: string): string => {
   return '';
 };
 
-/**
-  Mention Me Design Review Type ID
- */
-const MM_DESIGN_REVIEW_TYPE_ID = 4884434;
-
 export const LABELS = {
   HOTFIX_PRE_PROD: 'HOTFIX-PRE-PROD',
   HOTFIX_PROD: 'HOTFIX-PROD',
@@ -336,8 +331,11 @@ const getEstimateForStoryType = (story: PivotalStory) => {
 export const getPrDescription = (body: string = '', story: PivotalStory, reviews: PivotalStoryReview[]): string => {
   const { url, id, story_type, labels, description, name } = story;
   const labelsArr = (labels as Label[]).map((label: { name: string }) => label.name).join(', ');
+
+  // Mention Me Design Review Type IDs
+  const mmDesignReviewTypes = [4013928, 4884434];
   const requireDesignReview = reviews.filter(
-      (review: PivotalStoryReview) => review.review_type_id === MM_DESIGN_REVIEW_TYPE_ID
+      (review: PivotalStoryReview) => mmDesignReviewTypes.indexOf(review.review_type_id) !== -1
   ).length > 0;
 
   console.log("Require Design review", requireDesignReview);
