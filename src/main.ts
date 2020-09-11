@@ -29,6 +29,7 @@ const getInputs = () => {
   const BRANCH_IGNORE_PATTERN: string = core.getInput('skip-branches', { required: false }) || '';
   const SKIP_COMMENTS: string = core.getInput('skip-comments', { required: false }) || 'false';
   const PR_THRESHOLD: string = core.getInput('pr-threshold', { required: false }) || '';
+  const SUPPRESS_ERRORS: string = core.getInput('suppress-errors', { required: false }) || 'false';
 
   return {
     PIVOTAL_TOKEN,
@@ -36,10 +37,21 @@ const getInputs = () => {
     BRANCH_IGNORE_PATTERN,
     SKIP_COMMENTS,
     PR_THRESHOLD,
+    SUPPRESS_ERRORS,
   };
 };
 
 async function run() {
+  const doExit = (failureMessage: string) => {
+    const { SUPPRESS_ERRORS } = getInputs();
+    if (SUPPRESS_ERRORS === "true") {
+      process.exit(0);
+    } else {
+      core.setFailed(failureMessage);
+      process.exit(1);
+    }
+  }
+
   try {
     const { PIVOTAL_TOKEN, GITHUB_TOKEN, BRANCH_IGNORE_PATTERN, SKIP_COMMENTS, PR_THRESHOLD } = getInputs();
 
@@ -83,8 +95,7 @@ async function run() {
       };
       await addComment(client, comment);
 
-      core.setFailed('Unable to get the head and base branch');
-      process.exit(1);
+      doExit('Unable to get the head and base branch');
     }
 
     console.log('Base branch -> ', baseBranch);
@@ -102,8 +113,7 @@ async function run() {
       };
       await addComment(client, comment);
 
-      core.setFailed('Pivotal id is missing in your branch.');
-      process.exit(1);
+      doExit('Pivotal id is missing in your branch.');
     }
 
     const { getPivotalDetails } = pivotal(PIVOTAL_TOKEN);
@@ -165,12 +175,10 @@ async function run() {
       };
       await addComment(client, comment);
 
-      core.setFailed('Invalid pivotal story id. Please create a branch with a valid pivotal story');
-      process.exit(1);
+      doExit('Invalid pivotal story id. Please create a branch with a valid pivotal story');
     }
   } catch (error) {
-    core.setFailed(error.message);
-    process.exit(1);
+    doExit(error.message);
   }
 }
 

@@ -95,12 +95,7 @@ export const pivotal = (pivotalToken: string) => {
  * @param {IssuesAddLabelsParams} labelData
  */
 export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabelsParams) => {
-  try {
-    await client.issues.addLabels(labelData);
-  } catch (error) {
-    core.setFailed(error.message);
-    process.exit(1);
-  }
+  await client.issues.addLabels(labelData);
 };
 
 /**
@@ -109,12 +104,7 @@ export const addLabels = async (client: github.GitHub, labelData: IssuesAddLabel
  * @param {PullsUpdateParams} prData
  */
 export const updatePrDetails = async (client: github.GitHub, prData: PullsUpdateParams) => {
-  try {
-    await client.pulls.update(prData);
-  } catch (error) {
-    core.setFailed(error.message);
-    process.exit(1);
-  }
+  await client.pulls.update(prData);
 };
 
 /**

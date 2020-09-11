@@ -20,6 +20,10 @@ inputs:
     description: 'An `Integer` based on which pivotal-lint add a comment discouraging huge PRs. Is disabled by `skip-comments`'
     required: false
     default: 800
+  suppress-errors:
+    description: 'A boolean if set to true, will never fail'
+    required: false
+    default: false
 runs:
   using: 'node12'
   main: 'lib/index.js'
