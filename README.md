@@ -41,6 +41,7 @@ jobs:
           pivotal-token: ${{ secrets.PIVOTAL_TOKEN }}
           skip-branches: '^(production-release|master|release\/v\d+)$'
           skip-comments: true
+          suppress-errors: true
           pr-threshold: 1000
 ```
 
@@ -124,13 +125,14 @@ When a PR passes the above check, `pivotal-lint` will also add the story details
 
 ### Options
 
-| key             | description                                                                                      | required | default |
-| --------------- | ------------------------------------------------------------------------------------------------ | -------- | ------- |
-| `github-token`  | Token used to update PR description. `GITHUB_TOKEN` is already available [when you use GitHub actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret), so all that is required is to pass it as a param here. | true     | null    |
-| `pivotal-token` | API Token used to fetch Pivotal Story information. Must have read access to your PivotalTracker projects. Check [here](https://www.pivotaltracker.com/help/articles/api_token/) on how to get a Pivotal API Token| true     | null    |
-| `skip-branches` | A regex to ignore running `pivotal-lint` on certain branches, like production etc.                      | false    | ' '     |
-| `skip-comments` | A `Boolean` if set to `true` `pivotal-lint` will skip adding lint comments for PR title.                | false    | false   |
-| `pr-threshold`  | An `Integer` based on which `pivotal-lint` will add a comment discouraging huge PRs.                              | false    | 800     |
+| key               | description                                                                                      | required | default |
+| ----------------- | ------------------------------------------------------------------------------------------------ | -------- | ------- |
+| `github-token`    | Token used to update PR description. `GITHUB_TOKEN` is already available [when you use GitHub actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret), so all that is required is to pass it as a param here. | true     | null    |
+| `pivotal-token`   | API Token used to fetch Pivotal Story information. Must have read access to your PivotalTracker projects. Check [here](https://www.pivotaltracker.com/help/articles/api_token/) on how to get a Pivotal API Token| true     | null    |
+| `skip-branches`   | A regex to ignore running `pivotal-lint` on certain branches, like production etc.               | false    | ' '     |
+| `skip-comments`   | A `Boolean` if set to `true` `pivotal-lint` will skip adding lint comments for PR title.         | false    | false   |
+| `suppress-errors` | A `Boolean` if set to `true` `pivotal-lint` will never fail.                                     | false    | false   |
+| `pr-threshold`    | An `Integer` based on which `pivotal-lint` will add a comment discouraging huge PRs.             | false    | 800     |
 
 Since tokens are private, we suggest adding them as [GitHub secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets).
 
